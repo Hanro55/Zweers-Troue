@@ -40,6 +40,8 @@ button{
 .download-btn:hover{ background:#0080ff;}
 .select-all-btn{ background:#00ff99; color:black; padding:15px 25px;}
 .select-all-btn:hover{ background:#00cc7a;}
+.deselect-all-btn{ background:#ffcc00; color:black; padding:15px 25px;}
+.deselect-all-btn:hover{ background:#e6b800;}
 .delete-btn{ background:#ff3333; color:white; font-size:14px; padding:5px 10px;}
 #drop-area {
     border: 2px dashed #fff;
@@ -82,8 +84,6 @@ button{
     color:#ff4da6;
     font-weight:bold;
 }
-
-/* Flex container for select/download buttons */
 .controls {
     display:flex;
     justify-content:center;
@@ -106,9 +106,10 @@ button{
         <p>Of sleep jou foto hierheen</p>
     </div>
 
-    <!-- Select All + Download buttons -->
+    <!-- Select / Deselect / Download buttons -->
     <div class="controls">
-        <button class="select-all-btn" onclick="selectAllPhotos()">Select All Photos</button>
+        <button class="select-all-btn" onclick="selectAllPhotos()">Select All</button>
+        <button class="deselect-all-btn" onclick="deselectAllPhotos()">Deselect All</button>
         <button class="download-btn" onclick="downloadSelected()">Download Selected</button>
     </div>
 
@@ -215,23 +216,27 @@ async function loadImages(){
 }
 loadImages();
 
-// Download selected
+// Select/Deselect all
 function selectAllPhotos(){
     document.querySelectorAll(".photo-checkbox").forEach(cb => cb.checked=true);
 }
+function deselectAllPhotos(){
+    document.querySelectorAll(".photo-checkbox").forEach(cb => cb.checked=false);
+}
 
+// Download selected
 async function downloadSelected(){
-    const galleryItems = document.querySelectorAll(".gallery-item");
-    for(const item of galleryItems){
-        const checkbox = item.querySelector(".photo-checkbox");
-        const img = item.querySelector("img");
-        if(checkbox.checked){
+    const checkboxes = document.querySelectorAll(".gallery-item input.photo-checkbox");
+    for(const cb of checkboxes){
+        if(cb.checked){
+            const img = cb.closest(".gallery-item").querySelector("img");
             const a = document.createElement("a");
             a.href = img.src;
             a.download = img.src.split("/").pop();
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+            await new Promise(r => setTimeout(r, 100)); // small delay for mobile
         }
     }
 }
