@@ -20,11 +20,10 @@ body::before {
     z-index: -1;
 }
 
-/* Page styling */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #000; /* fallback */
+    background: #000;
     color: #fff;
     text-align: center;
 }
@@ -33,15 +32,9 @@ body {
     margin: 0 auto;
     padding: 40px 20px;
 }
-h1 {
-    font-size: 32px;
-    color: #fff;
-}
-p{
-    font-size: 18px;
-    color: #ccc;
-}
-button{
+h1 { font-size: 32px; color: #fff; }
+p { font-size: 18px; color: #ccc; }
+button {
     border:none;
     border-radius:30px;
     font-size:18px;
@@ -51,8 +44,8 @@ button{
 }
 .upload-btn{ background:#ff4da6; color:white; padding:15px 30px;}
 .upload-btn:hover{ background: #e60084;}
-.open-btn{ background:#4da6ff; color:white; padding:15px 25px;}
-.open-btn:hover{ background:#0080ff;}
+.download-btn{ background:#4da6ff; color:white; padding:15px 25px;}
+.download-btn:hover{ background:#0080ff;}
 .select-all-btn{ background:#00ff99; color:black; padding:15px 25px;}
 .select-all-btn:hover{ background:#00cc7a;}
 .deselect-all-btn{ background:#ffcc00; color:black; padding:15px 25px;}
@@ -114,23 +107,20 @@ button{
     <h1>📸 Zweers Troue Gallery</h1>
     <p>Upload jou photos vanaf jou foon of rekenaar! ❤️</p>
 
-    <!-- Drag & drop area -->
     <div id="drop-area">
         <input type="file" id="fileInput" hidden>
         <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
         <p>Of sleep jou foto hierheen</p>
     </div>
 
-    <!-- Select / Deselect / Open buttons -->
     <div class="controls">
         <button class="select-all-btn" onclick="selectAllPhotos()">Select All</button>
         <button class="deselect-all-btn" onclick="deselectAllPhotos()">Deselect All</button>
-        <button class="open-btn" onclick="openSelected()">Open Selected</button>
+        <button class="download-btn" onclick="downloadSelected()">Download Selected</button>
     </div>
 
     <div class="confetti-message" id="confettiMessage"></div>
 
-    <!-- Gallery -->
     <div class="gallery" id="gallery"></div>
 </div>
 
@@ -151,8 +141,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
-
-// Admin password for delete
 const adminPassword = "troueAdmin123";
 
 // Upload
@@ -213,7 +201,6 @@ async function loadImages(){
         div.appendChild(img);
         div.appendChild(checkboxContainer);
 
-        // Delete button for admin
         const deleteBtn = document.createElement("button");
         deleteBtn.className="delete-btn";
         deleteBtn.innerText="Delete";
@@ -231,26 +218,36 @@ async function loadImages(){
 }
 loadImages();
 
-// Select/Deselect all
-function selectAllPhotos(){
-    document.querySelectorAll(".photo-checkbox").forEach(cb => cb.checked=true);
-}
-function deselectAllPhotos(){
-    document.querySelectorAll(".photo-checkbox").forEach(cb => cb.checked=false);
-}
+// Select / Deselect
+function selectAllPhotos(){ document.querySelectorAll(".photo-checkbox").forEach(cb => cb.checked=true);}
+function deselectAllPhotos(){ document.querySelectorAll(".photo-checkbox").forEach(cb => cb.checked=false);}
 
-// Open selected photos in new tabs (works 100% on desktop & mobile)
-function openSelected(){
+// 🔹 Download selected photos (works on mobile now)
+async function downloadSelected(){
     const checkboxes = document.querySelectorAll(".gallery-item input.photo-checkbox");
-    checkboxes.forEach(cb => {
+    for(const cb of checkboxes){
         if(cb.checked){
             const img = cb.closest(".gallery-item").querySelector("img");
-            window.open(img.src, '_blank');
+            const url = img.src;
+            try{
+                const resp = await fetch(url);
+                const blob = await resp.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = blobUrl;
+                a.download = url.split('/').pop();
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(blobUrl);
+            }catch(err){
+                alert("Download failed: "+err);
+            }
         }
-    });
+    }
 }
 
-// Confetti message
+// Confetti
 function showConfetti(){
     const msg = document.getElementById("confettiMessage");
     msg.innerText="🎉 Dankie! Jou foto is nou deel van die herinneringe!";
