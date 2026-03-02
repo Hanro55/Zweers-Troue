@@ -6,7 +6,6 @@
 <title>Zweers Troue Gallery</title>
 
 <style>
-/* 🖤🤍 Swart-wit theme */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -27,9 +26,7 @@ p{
     font-size: 18px;
     color: #ccc;
 }
-.upload-btn, .download-btn{
-    background:#ff4da6;
-    color:white;
+button{
     padding:15px 30px;
     border:none;
     border-radius:30px;
@@ -38,9 +35,13 @@ p{
     margin: 15px 5px;
     transition: 0.3s;
 }
-.upload-btn:hover, .download-btn:hover{
-    background: #e60084;
-}
+.upload-btn{ background:#ff4da6; color:white;}
+.upload-btn:hover{ background: #e60084;}
+.download-btn{ background:#4da6ff; color:white;}
+.download-btn:hover{ background:#0080ff;}
+.select-all-btn{ background:#00ff99; color:black;}
+.select-all-btn:hover{ background:#00cc7a;}
+.delete-btn{ background:#ff3333; color:white; font-size:14px; padding:5px 10px;}
 #drop-area {
     border: 2px dashed #fff;
     padding: 20px;
@@ -48,9 +49,7 @@ p{
     margin: 20px 0;
     transition: 0.3s;
 }
-#drop-area.hover {
-    background: rgba(255,255,255,0.1);
-}
+#drop-area.hover { background: rgba(255,255,255,0.1);}
 .gallery{
     margin-top:40px;
     display:grid;
@@ -70,9 +69,7 @@ p{
     opacity: 0;
     animation: fadeIn 0.5s forwards;
 }
-@keyframes fadeIn {
-    to {opacity:1;}
-}
+@keyframes fadeIn { to {opacity:1;} }
 .checkbox-container{
     position:absolute;
     top:8px;
@@ -92,7 +89,7 @@ p{
 
 <div class="container">
     <h1>📸 Zweers Troue Gallery</h1>
-    <p>Upload jou photos en deel die herinneringe! ❤️</p>
+    <p>Upload jou photos vanaf jou foon of rekenaar! ❤️</p>
 
     <!-- Drag & drop area -->
     <div id="drop-area">
@@ -101,7 +98,7 @@ p{
         <p>Of sleep jou foto hierheen</p>
     </div>
 
-    <!-- Download selected -->
+    <button class="select-all-btn" onclick="selectAllPhotos()">Select All Photos</button>
     <button class="download-btn" onclick="downloadSelected()">Download Selected Photos</button>
     <div class="confetti-message" id="confettiMessage"></div>
 
@@ -110,11 +107,10 @@ p{
 </div>
 
 <script type="module">
-// 🔴 Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getStorage, ref, uploadBytes, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
 
-// 🔹 Firebase config
+// Firebase config
 const firebaseConfig = {
     apiKey: "AIzaSyB_AVP6tZD8U4AHNLrVf9nCe-gpOHPDLM8",
     authDomain: "zweers-troue.firebaseapp.com",
@@ -128,11 +124,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
-// 🔹 Upload funksie
+// Admin password for delete
+const adminPassword = "troueAdmin123"; // jy kan verander
+
+// 🔹 Upload
 const input = document.getElementById("fileInput");
 const dropArea = document.getElementById("drop-area");
 
-function handleFiles(file) {
+function handleFiles(file){
     const storageRef = ref(storage,"photos/"+file.name);
     uploadBytes(storageRef,file).then(()=>{
         showConfetti();
@@ -145,7 +144,6 @@ input.addEventListener("change",(e)=>{
     if(file) handleFiles(file);
 });
 
-// Drag & drop
 dropArea.addEventListener("dragover",(e)=>{
     e.preventDefault();
     dropArea.classList.add("hover");
@@ -161,7 +159,7 @@ dropArea.addEventListener("drop",(e)=>{
     if(file) handleFiles(file);
 });
 
-// 🔹 Gallery funksie
+// 🔹 Load gallery
 async function loadImages(){
     const gallery = document.getElementById("gallery");
     gallery.innerHTML="";
@@ -184,15 +182,32 @@ async function loadImages(){
         const checkboxContainer = document.createElement("div");
         checkboxContainer.className="checkbox-container";
         checkboxContainer.appendChild(checkbox);
-
         div.appendChild(img);
         div.appendChild(checkboxContainer);
+
+        // Delete button for admin
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className="delete-btn";
+        deleteBtn.innerText="Delete";
+        deleteBtn.onclick = async ()=>{
+            const pass = prompt("Enter admin password to delete this photo:");
+            if(pass===adminPassword){
+                await deleteObject(ref(storage,"photos/"+item.name));
+                loadImages();
+            } else { alert("Wrong password!"); }
+        }
+        div.appendChild(deleteBtn);
+
         gallery.appendChild(div);
     }
 }
 loadImages();
 
-// 🔹 Download selected photos
+// 🔹 Download selected
+function selectAllPhotos(){
+    document.querySelectorAll(".photo-checkbox").forEach(cb => cb.checked=true);
+}
+
 async function downloadSelected(){
     const galleryItems = document.querySelectorAll(".gallery-item");
     for(const item of galleryItems){
@@ -209,7 +224,7 @@ async function downloadSelected(){
     }
 }
 
-// 🔹 Confetti / dankie boodskap
+// 🔹 Confetti message
 function showConfetti(){
     const msg = document.getElementById("confettiMessage");
     msg.innerText="🎉 Dankie! Jou foto is nou deel van die herinneringe!";
