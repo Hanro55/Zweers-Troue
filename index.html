@@ -6,7 +6,7 @@
 <title>Zweers Troue Gallery</title>
 
 <style>
-/* Faded background */
+/* Faded background from local folder */
 body::before {
     content: "";
     position: fixed;
@@ -14,7 +14,7 @@ body::before {
     left:0;
     width:100%;
     height:100%;
-    background: url('https://yourdomain.com/faded-background.jpg') no-repeat center center;
+    background: url('images/wedding.png') no-repeat center center;
     background-size: cover;
     opacity: 0.15; /* faded effect */
     z-index: -1;
@@ -51,8 +51,8 @@ button{
 }
 .upload-btn{ background:#ff4da6; color:white; padding:15px 30px;}
 .upload-btn:hover{ background: #e60084;}
-.download-btn{ background:#4da6ff; color:white; padding:15px 25px;}
-.download-btn:hover{ background:#0080ff;}
+.open-btn{ background:#4da6ff; color:white; padding:15px 25px;}
+.open-btn:hover{ background:#0080ff;}
 .select-all-btn{ background:#00ff99; color:black; padding:15px 25px;}
 .select-all-btn:hover{ background:#00cc7a;}
 .deselect-all-btn{ background:#ffcc00; color:black; padding:15px 25px;}
@@ -121,11 +121,11 @@ button{
         <p>Of sleep jou foto hierheen</p>
     </div>
 
-    <!-- Select / Deselect / Download buttons -->
+    <!-- Select / Deselect / Open buttons -->
     <div class="controls">
         <button class="select-all-btn" onclick="selectAllPhotos()">Select All</button>
         <button class="deselect-all-btn" onclick="deselectAllPhotos()">Deselect All</button>
-        <button class="download-btn" onclick="downloadSelected()">Download Selected</button>
+        <button class="open-btn" onclick="openSelected()">Open Selected</button>
     </div>
 
     <div class="confetti-message" id="confettiMessage"></div>
@@ -239,28 +239,15 @@ function deselectAllPhotos(){
     document.querySelectorAll(".photo-checkbox").forEach(cb => cb.checked=false);
 }
 
-// Download selected using blob (CORS safe)
-async function downloadSelected(){
+// Open selected photos in new tabs (works 100% on desktop & mobile)
+function openSelected(){
     const checkboxes = document.querySelectorAll(".gallery-item input.photo-checkbox");
-    for(const cb of checkboxes){
+    checkboxes.forEach(cb => {
         if(cb.checked){
             const img = cb.closest(".gallery-item").querySelector("img");
-            try {
-                const res = await fetch(img.src, {mode: 'cors'});
-                const blob = await res.blob();
-                const a = document.createElement("a");
-                a.href = URL.createObjectURL(blob);
-                a.download = img.src.split("/").pop();
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(a.href);
-                await new Promise(r => setTimeout(r,100));
-            } catch(e){
-                console.error("Download failed. Gebruik 'Save Image As' op selfoon.", e);
-            }
+            window.open(img.src, '_blank');
         }
-    }
+    });
 }
 
 // Confetti message
