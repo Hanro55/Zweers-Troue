@@ -224,19 +224,26 @@ function deselectAllPhotos(){
     document.querySelectorAll(".photo-checkbox").forEach(cb => cb.checked=false);
 }
 
-// Download selected
+// Download selected using blob (works on mobile/desktop)
 async function downloadSelected(){
     const checkboxes = document.querySelectorAll(".gallery-item input.photo-checkbox");
     for(const cb of checkboxes){
         if(cb.checked){
             const img = cb.closest(".gallery-item").querySelector("img");
-            const a = document.createElement("a");
-            a.href = img.src;
-            a.download = img.src.split("/").pop();
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            await new Promise(r => setTimeout(r, 100)); // small delay for mobile
+            try {
+                const res = await fetch(img.src);
+                const blob = await res.blob();
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = img.src.split("/").pop();
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(a.href);
+                await new Promise(r => setTimeout(r,100)); // small delay for mobile
+            } catch(e){
+                console.error("Download failed", e);
+            }
         }
     }
 }
