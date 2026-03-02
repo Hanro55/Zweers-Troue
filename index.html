@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zweers Troue Photo Gallery</title>
+
+<style>
+/* 🔹 Algemene style */
+body{
+    font-family: 'Arial', sans-serif;
+    margin:0;
+    background: linear-gradient(to right, #f7e9ff, #ffe9f0);
+    text-align:center;
+}
+.container{
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+h1{
+    font-size: 32px;
+    color: #ff4da6;
+}
+p{
+    font-size: 18px;
+    color: #555;
+}
+.upload-btn, .download-btn{
+    background: #ff4da6;
+    color: white;
+    padding: 15px 30px;
+    border:none;
+    border-radius:30px;
+    font-size:18px;
+    cursor:pointer;
+    margin: 15px 5px;
+    transition: 0.3s;
+}
+.upload-btn:hover, .download-btn:hover{
+    background: #e60084;
+}
+.gallery{
+    margin-top:40px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:15px;
+    padding:20px;
+}
+.gallery img{
+    width:100%;
+    border-radius:15px;
+    cursor:pointer;
+    transition:0.3s;
+}
+.gallery img:hover{
+    transform: scale(1.05);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📸 Zweers Troue Photo Gallery</h1>
+    <p>Upload jou photos en deel die herinneringe! ❤️</p>
+
+    <!-- Upload knoppie -->
+    <input type="file" id="fileInput" hidden>
+    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
+
+    <!-- Download gallery -->
+    <button class="download-btn" onclick="downloadAll()">Download All Photos</button>
+
+    <!-- Gallery -->
+    <div class="gallery" id="gallery"></div>
+</div>
+
+<script type="module">
+// 🔴 Firebase SDK & config
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getStorage, ref, uploadBytes, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+
+// Jou Firebase config
+const firebaseConfig = {
+    apiKey: "AIzaSyB_AVP6tZD8U4AHNLrVf9nCe-gpOHPDLM8",
+    authDomain: "zweers-troue.firebaseapp.com",
+    projectId: "zweers-troue",
+    storageBucket: "zweers-troue.firebasestorage.app",
+    messagingSenderId: "584236352490",
+    appId: "1:584236352490:web:c717038090bd005e712893",
+    measurementId: "G-JBWM0TNSM4"
+};
+
+// Firebase init
+const app = initializeApp(firebaseConfig);
+const storage = getStorage(app);
+
+// 🔹 Upload funksie
+const input = document.getElementById("fileInput");
+input.addEventListener("change", async (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const storageRef = ref(storage,"photos/"+file.name);
+    await uploadBytes(storageRef,file);
+    loadImages();
+});
+
+// 🔹 Gallery funksie
+async function loadImages(){
+    const gallery = document.getElementById("gallery");
+    gallery.innerHTML="";
+    const listRef = ref(storage,"photos");
+    const res = await listAll(listRef);
+    for(const item of res.items){
+        const url = await getDownloadURL(item);
+        const img = document.createElement("img");
+        img.src=url;
+        gallery.appendChild(img);
+    }
+}
+
+// 🔹 Download all
+async function downloadAll(){
+    const listRef = ref(storage,"photos");
+    const res = await listAll(listRef);
+    for(const item of res.items){
+        const url = await getDownloadURL(item);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = item.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+}
+
+// Laai gallery eerste keer
+loadImages();
+
+</script>
+
+</body>
+</html>
