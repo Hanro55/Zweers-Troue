@@ -214,12 +214,18 @@ document.getElementById("deselectAllBtn").addEventListener("click", ()=>{
 });
 document.getElementById("downloadSelectedBtn").addEventListener("click", async ()=>{
     const checkboxes = document.querySelectorAll(".gallery-item input.photo-checkbox");
-    for(const cb of checkboxes){
-        if(cb.checked){
-            const img = cb.closest(".gallery-item").querySelector("img");
-            const resp = await fetch(img.src);
-            const blob = await resp.blob();
+    const selected = Array.from(checkboxes).filter(cb=>cb.checked);
+
+    if(selected.length === 0){ alert("Geen foto geselekteer nie!"); return; }
+
+    for(const cb of selected){
+        const img = cb.closest(".gallery-item").querySelector("img");
+        try{
+            // Fetch image as blob
+            const response = await fetch(img.src, { mode: 'cors' });
+            const blob = await response.blob();
             const blobUrl = URL.createObjectURL(blob);
+
             const a = document.createElement("a");
             a.href = blobUrl;
             a.download = img.src.split("/").pop();
@@ -227,6 +233,9 @@ document.getElementById("downloadSelectedBtn").addEventListener("click", async (
             a.click();
             a.remove();
             URL.revokeObjectURL(blobUrl);
+        } catch(err){
+            console.error("Download failed:", err);
+            alert("Kon nie foto aflaai nie. Probeer asseblief weer.");
         }
     }
 });
