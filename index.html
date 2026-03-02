@@ -6,10 +6,25 @@
 <title>Zweers Troue Gallery</title>
 
 <style>
+/* Faded background */
+body::before {
+    content: "";
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: url('https://yourdomain.com/faded-background.jpg') no-repeat center center;
+    background-size: cover;
+    opacity: 0.15; /* faded effect */
+    z-index: -1;
+}
+
+/* Page styling */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #000;
+    background: #000; /* fallback */
     color: #fff;
     text-align: center;
 }
@@ -224,14 +239,14 @@ function deselectAllPhotos(){
     document.querySelectorAll(".photo-checkbox").forEach(cb => cb.checked=false);
 }
 
-// Download selected using blob (works on mobile/desktop)
+// Download selected using blob (CORS safe)
 async function downloadSelected(){
     const checkboxes = document.querySelectorAll(".gallery-item input.photo-checkbox");
     for(const cb of checkboxes){
         if(cb.checked){
             const img = cb.closest(".gallery-item").querySelector("img");
             try {
-                const res = await fetch(img.src);
+                const res = await fetch(img.src, {mode: 'cors'});
                 const blob = await res.blob();
                 const a = document.createElement("a");
                 a.href = URL.createObjectURL(blob);
@@ -240,9 +255,9 @@ async function downloadSelected(){
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(a.href);
-                await new Promise(r => setTimeout(r,100)); // small delay for mobile
+                await new Promise(r => setTimeout(r,100));
             } catch(e){
-                console.error("Download failed", e);
+                console.error("Download failed. Gebruik 'Save Image As' op selfoon.", e);
             }
         }
     }
