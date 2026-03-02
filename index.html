@@ -3,33 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zweers Troue Photo Gallery</title>
+<title>Zweers Troue Gallery</title>
 
 <style>
-/* 🔹 Algemene style */
-body{
-    font-family: 'Arial', sans-serif;
-    margin:0;
-    background: linear-gradient(to right, #f7e9ff, #ffe9f0);
-    text-align:center;
+/* 🖤🤍 Swart-wit theme */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #000;
+    color: #fff;
+    text-align: center;
 }
 .container{
     max-width: 1000px;
     margin: 0 auto;
     padding: 40px 20px;
 }
-h1{
+h1 {
     font-size: 32px;
-    color: #ff4da6;
+    color: #fff;
 }
 p{
     font-size: 18px;
-    color: #555;
+    color: #ccc;
 }
 .upload-btn, .download-btn{
-    background: #ff4da6;
-    color: white;
-    padding: 15px 30px;
+    background:#ff4da6;
+    color:white;
+    padding:15px 30px;
     border:none;
     border-radius:30px;
     font-size:18px;
@@ -40,6 +41,16 @@ p{
 .upload-btn:hover, .download-btn:hover{
     background: #e60084;
 }
+#drop-area {
+    border: 2px dashed #fff;
+    padding: 20px;
+    border-radius: 20px;
+    margin: 20px 0;
+    transition: 0.3s;
+}
+#drop-area.hover {
+    background: rgba(255,255,255,0.1);
+}
 .gallery{
     margin-top:40px;
     display:grid;
@@ -47,40 +58,63 @@ p{
     gap:15px;
     padding:20px;
 }
-.gallery img{
+.gallery-item{
+    position: relative;
+    display: inline-block;
+    transition: 0.3s;
+}
+.gallery-item img{
     width:100%;
     border-radius:15px;
     cursor:pointer;
-    transition:0.3s;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
 }
-.gallery img:hover{
-    transform: scale(1.05);
+@keyframes fadeIn {
+    to {opacity:1;}
+}
+.checkbox-container{
+    position:absolute;
+    top:8px;
+    left:8px;
+    background: rgba(0,0,0,0.5);
+    padding:2px 6px;
+    border-radius:5px;
+}
+.confetti-message{
+    margin-top: 10px;
+    color:#ff4da6;
+    font-weight:bold;
 }
 </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📸 Zweers Troue Photo Gallery</h1>
+    <h1>📸 Zweers Troue Gallery</h1>
     <p>Upload jou photos en deel die herinneringe! ❤️</p>
 
-    <!-- Upload knoppie -->
-    <input type="file" id="fileInput" hidden>
-    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
+    <!-- Drag & drop area -->
+    <div id="drop-area">
+        <input type="file" id="fileInput" hidden>
+        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
+        <p>Of sleep jou foto hierheen</p>
+    </div>
 
-    <!-- Download gallery -->
-    <button class="download-btn" onclick="downloadAll()">Download All Photos</button>
+    <!-- Download selected -->
+    <button class="download-btn" onclick="downloadSelected()">Download Selected Photos</button>
+    <div class="confetti-message" id="confettiMessage"></div>
 
     <!-- Gallery -->
     <div class="gallery" id="gallery"></div>
 </div>
 
 <script type="module">
-// 🔴 Firebase SDK & config
+// 🔴 Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import { getStorage, ref, uploadBytes, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
 
-// Jou Firebase config
+// 🔹 Firebase config
 const firebaseConfig = {
     apiKey: "AIzaSyB_AVP6tZD8U4AHNLrVf9nCe-gpOHPDLM8",
     authDomain: "zweers-troue.firebaseapp.com",
@@ -91,18 +125,40 @@ const firebaseConfig = {
     measurementId: "G-JBWM0TNSM4"
 };
 
-// Firebase init
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
 // 🔹 Upload funksie
 const input = document.getElementById("fileInput");
-input.addEventListener("change", async (e)=>{
-    const file = e.target.files[0];
-    if(!file) return;
+const dropArea = document.getElementById("drop-area");
+
+function handleFiles(file) {
     const storageRef = ref(storage,"photos/"+file.name);
-    await uploadBytes(storageRef,file);
-    loadImages();
+    uploadBytes(storageRef,file).then(()=>{
+        showConfetti();
+        loadImages();
+    });
+}
+
+input.addEventListener("change",(e)=>{
+    const file = e.target.files[0];
+    if(file) handleFiles(file);
+});
+
+// Drag & drop
+dropArea.addEventListener("dragover",(e)=>{
+    e.preventDefault();
+    dropArea.classList.add("hover");
+});
+dropArea.addEventListener("dragleave",(e)=>{
+    e.preventDefault();
+    dropArea.classList.remove("hover");
+});
+dropArea.addEventListener("drop",(e)=>{
+    e.preventDefault();
+    dropArea.classList.remove("hover");
+    const file = e.dataTransfer.files[0];
+    if(file) handleFiles(file);
 });
 
 // 🔹 Gallery funksie
@@ -111,32 +167,54 @@ async function loadImages(){
     gallery.innerHTML="";
     const listRef = ref(storage,"photos");
     const res = await listAll(listRef);
+
     for(const item of res.items){
         const url = await getDownloadURL(item);
+
+        const div = document.createElement("div");
+        div.className="gallery-item";
+
         const img = document.createElement("img");
         img.src=url;
-        gallery.appendChild(img);
+
+        const checkbox = document.createElement("input");
+        checkbox.type="checkbox";
+        checkbox.className="photo-checkbox";
+
+        const checkboxContainer = document.createElement("div");
+        checkboxContainer.className="checkbox-container";
+        checkboxContainer.appendChild(checkbox);
+
+        div.appendChild(img);
+        div.appendChild(checkboxContainer);
+        gallery.appendChild(div);
     }
 }
-
-// 🔹 Download all
-async function downloadAll(){
-    const listRef = ref(storage,"photos");
-    const res = await listAll(listRef);
-    for(const item of res.items){
-        const url = await getDownloadURL(item);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = item.name;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
-}
-
-// Laai gallery eerste keer
 loadImages();
 
+// 🔹 Download selected photos
+async function downloadSelected(){
+    const galleryItems = document.querySelectorAll(".gallery-item");
+    for(const item of galleryItems){
+        const checkbox = item.querySelector(".photo-checkbox");
+        const img = item.querySelector("img");
+        if(checkbox.checked){
+            const a = document.createElement("a");
+            a.href = img.src;
+            a.download = img.src.split("/").pop();
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    }
+}
+
+// 🔹 Confetti / dankie boodskap
+function showConfetti(){
+    const msg = document.getElementById("confettiMessage");
+    msg.innerText="🎉 Dankie! Jou foto is nou deel van die herinneringe!";
+    setTimeout(()=>{msg.innerText="";},3000);
+}
 </script>
 
 </body>
