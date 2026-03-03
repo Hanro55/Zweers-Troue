@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zweers Troue Gallery</title>
+<title>Zweers Troue Gallery Premium</title>
 <style>
 body::before{
     content:"";
@@ -15,13 +15,10 @@ body{margin:0; font-family:Arial, sans-serif; background:#000; color:#fff;}
 .container{max-width:1000px;margin:0 auto;padding:20px;}
 h1{text-align:center;font-size:32px;color:#fff;}
 p{text-align:center;font-size:18px;color:#ccc;}
-
-/* Buttons */
 button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;transition:0.3s;}
 .upload-btn{background:#ff4da6;color:white;padding:12px 25px;}
 .upload-btn:hover{background:#e60084;}
 .download-btn{background:#4da6ff;color:white;padding:12px 20px;}
-.download-btn:hover{background:#0080ff;}
 .select-all-btn{background:#00ff99;color:black;padding:12px 20px;}
 .select-all-btn:hover{background:#00cc7a;}
 .deselect-all-btn{background:#ffcc00;color:black;padding:12px 20px;}
@@ -31,11 +28,7 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
 /* Drop area */
 #drop-area{border:2px dashed #fff;padding:20px;border-radius:20px;margin:20px 0;text-align:center;transition:0.3s;}
 #drop-area.hover{background:rgba(255,255,255,0.1);}
-
-/* Controls */
 .controls{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
-
-/* Gallery grid */
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;padding:10px;margin-top:20px;}
 .gallery-item{position:relative;display:inline-block;transition:0.3s;background:rgba(255,255,255,0.05);border-radius:10px;overflow:hidden;}
 .gallery-item img{width:100%;border-radius:10px;cursor:pointer;opacity:0;animation:fadeIn 0.5s forwards;}
@@ -43,7 +36,7 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
 .checkbox-container{position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.5);padding:2px 6px;border-radius:5px;}
 .gallery-info{font-size:12px;padding:3px 6px;text-align:left;color:#fff;}
 
-/* Hero carousel */
+/* Carousel */
 .carousel{position:relative;width:100%;max-height:300px;margin-bottom:20px;overflow:hidden;border-radius:10px;}
 .carousel img{width:100%;height:300px;object-fit:cover;}
 .carousel-caption{position:absolute;bottom:10px;left:10px;color:#fff;font-size:20px;background:rgba(0,0,0,0.5);padding:5px 10px;border-radius:5px;}
@@ -65,6 +58,9 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
 #lightboxOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:none;justify-content:center;align-items:center;z-index:2000;}
 #lightboxOverlay img{max-width:90%;max-height:90%;border-radius:10px;}
 #lightboxOverlay span{position:absolute;top:20px;right:30px;font-size:30px;color:white;cursor:pointer;}
+
+/* Stats */
+.stats{display:flex;justify-content:center;gap:20px;margin:15px auto;font-size:14px;color:#fff;}
 </style>
 </head>
 <body>
@@ -76,6 +72,7 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
     <a href="#" data-category="bride">Bride</a>
     <a href="#" data-category="groom">Groom</a>
     <a href="#" data-category="friends">Friends</a>
+    <a href="#" data-category="other">Other</a>
     <a href="#" data-category="my">My Fotos</a>
 </div>
 <button id="sidebarToggle">☰</button>
@@ -102,7 +99,9 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
             <option value="bride">Bride</option>
             <option value="groom">Groom</option>
             <option value="friends">Friends</option>
+            <option value="other">Other</option>
         </select>
+        <input type="text" id="memoryMsg" placeholder="Jou boodskap" style="margin:5px; padding:5px; border-radius:5px;">
         <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
         <p>Of sleep jou foto hierheen</p>
     </div>
@@ -115,6 +114,7 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
     </div>
 
     <div class="confetti-message" id="confettiMessage"></div>
+    <div class="stats" id="stats"></div>
     <div class="gallery" id="gallery"></div>
 </div>
 
@@ -126,7 +126,7 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject, getMetadata, updateMetadata } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyB_AVP6tZD8U4AHNLrVf9nCe-gpOHPDLM8",
@@ -145,9 +145,11 @@ const input = document.getElementById("fileInput");
 const dropArea = document.getElementById("drop-area");
 const uploaderNameInput = document.getElementById("uploaderName");
 const categorySelect = document.getElementById("categorySelect");
+const memoryMsgInput = document.getElementById("memoryMsg");
 const gallery = document.getElementById("gallery");
 const heroCarousel = document.getElementById("heroCarousel");
 const searchBar = document.getElementById("searchBar");
+const statsDiv = document.getElementById("stats");
 
 // Sidebar toggle
 const sidebar = document.getElementById("sidebar");
@@ -162,12 +164,13 @@ document.getElementById("closeLightbox").addEventListener("click", ()=>lightboxO
 // Upload function
 async function handleFiles(file){
     const uploader = uploaderNameInput.value || "Anonymous";
-    const category = categorySelect.value || "all";
+    const category = categorySelect.value || "other";
+    const message = memoryMsgInput.value || "";
     const storageRef = ref(storage,`photos/${uploader}/${file.name}`);
-    const metadata = {customMetadata:{uploader, category}};
+    const metadata = {customMetadata:{uploader, category, message, likes:"0", featured:"false"}};
     await uploadBytes(storageRef,file,metadata);
     showConfetti();
-    loadImages();
+    loadImages(currentFilter, searchBar.value);
 }
 
 // File selection
@@ -181,73 +184,84 @@ dropArea.addEventListener("drop",(e)=>{ e.preventDefault(); dropArea.classList.r
 // Confetti
 function showConfetti(){ const msg=document.getElementById("confettiMessage"); msg.innerText="🎉 Dankie! Jou foto is nou deel van die herinneringe!"; setTimeout(()=>{msg.innerText="";},3000); }
 
+let currentFilter="all";
+let carouselImages=[];
+
 // Load gallery
 async function loadImages(filterCategory="all", searchName=""){
     gallery.innerHTML="";
+    carouselImages=[];
     const listRef = ref(storage,"photos");
     const res = await listAll(listRef);
-
     const allImages = [];
+    const uploaderCount={};
 
-    for(const folder of res.prefixes){ // per uploader folder
+    for(const folder of res.prefixes){ 
         const uploader = folder.name;
         if(searchName && !uploader.toLowerCase().includes(searchName.toLowerCase())) continue;
 
         const folderRes = await listAll(folder);
         for(const item of folderRes.items){
-            const url = await getDownloadURL(item);
-            const meta = item.customMetadata || {uploader, category:"all"};
-            const category = meta.category || "all";
+            const metaData = await getMetadata(item);
+            const meta = metaData.customMetadata || {};
+            const category = meta.category || "other";
+            const message = meta.message || "";
+            const likes = meta.likes || "0";
+            const featured = meta.featured || "false";
 
             if(filterCategory!=="all" && filterCategory!==category) continue;
 
-            const div=document.createElement("div");
-            div.className="gallery-item";
-            const img=document.createElement("img");
-            img.src=url;
-            img.addEventListener("click",()=>{lightboxImg.src=url; lightboxOverlay.style.display="flex";});
+            const div=document.createElement("div"); div.className="gallery-item";
+            const img=document.createElement("img"); img.src=await getDownloadURL(item);
+            img.addEventListener("click",()=>{lightboxImg.src=img.src; lightboxOverlay.style.display="flex";});
 
-            const checkbox=document.createElement("input");
-            checkbox.type="checkbox"; checkbox.className="photo-checkbox";
-            const checkboxContainer=document.createElement("div");
-            checkboxContainer.className="checkbox-container"; checkboxContainer.appendChild(checkbox);
+            const checkbox=document.createElement("input"); checkbox.type="checkbox"; checkbox.className="photo-checkbox";
+            const checkboxContainer=document.createElement("div"); checkboxContainer.className="checkbox-container"; checkboxContainer.appendChild(checkbox);
 
-            const deleteBtn=document.createElement("button");
-            deleteBtn.className="delete-btn"; deleteBtn.innerText="Delete";
+            const deleteBtn=document.createElement("button"); deleteBtn.className="delete-btn"; deleteBtn.innerText="Delete";
             deleteBtn.onclick=async ()=>{
                 const pass = prompt("Enter admin password to delete this photo:");
-                if(pass===adminPassword){ await deleteObject(item); loadImages(); } 
+                if(pass===adminPassword){ await deleteObject(item); loadImages(currentFilter, searchBar.value); } 
                 else { alert("Wrong password!"); }
             }
 
             const infoDiv=document.createElement("div"); infoDiv.className="gallery-info";
-            infoDiv.innerText=`👤 ${uploader} | 📂 ${category}`;
+            infoDiv.innerHTML=`👤 ${uploader} | 📂 ${category}<br>${message}<br>❤️ ${likes}`;
 
-            div.appendChild(img); div.appendChild(checkboxContainer);
-            div.appendChild(deleteBtn); div.appendChild(infoDiv);
+            div.appendChild(img); div.appendChild(checkboxContainer); div.appendChild(deleteBtn); div.appendChild(infoDiv);
             gallery.appendChild(div);
 
-            allImages.push({url, uploader, category});
+            allImages.push({url:img.src, uploader, category, message, likes, featured});
+
+            if(!uploaderCount[uploader]) uploaderCount[uploader]=0;
+            uploaderCount[uploader]++;
         }
     }
 
+    // Update stats
+    const totalPhotos=allImages.length;
+    const totalUsers=Object.keys(uploaderCount).length;
+    let topUploader = "None";
+    let topCount =0;
+    for(const [user,count] of Object.entries(uploaderCount)){if(count>topCount){topUploader=user; topCount=count;}}
+    statsDiv.innerHTML=`📸 ${totalPhotos} Fotos | 👥 ${totalUsers} Gaste | 🔥 Meeste uploads: ${topUploader} (${topCount})`;
+
     // Update carousel
-    updateCarousel(allImages.slice(-5));
+    carouselImages = allImages.filter(img=>img.featured==="true").slice(-5);
+    if(carouselImages.length===0) carouselImages = allImages.slice(-5);
+    updateCarousel();
 }
 
 // Carousel
 let currentSlide=0;
-function updateCarousel(images){
-    heroCarousel.innerHTML=`<button class="carousel-btn left" id="prevSlide">&#10094;</button>
-    <button class="carousel-btn right" id="nextSlide">&#10095;</button>
-    <div class="carousel-caption">Zweers Troue 2026 ❤️</div>`;
-    if(images.length===0) return;
-    const img=document.createElement("img"); img.src=images[currentSlide].url;
+function updateCarousel(){
+    heroCarousel.querySelectorAll("img").forEach(e=>e.remove());
+    if(carouselImages.length===0) return;
+    const img=document.createElement("img"); img.src=carouselImages[currentSlide].url;
     heroCarousel.appendChild(img);
-    document.getElementById("prevSlide").addEventListener("click",()=>{currentSlide=(currentSlide-1+images.length)%images.length; updateCarousel(images);});
-    document.getElementById("nextSlide").addEventListener("click",()=>{currentSlide=(currentSlide+1)%images.length; updateCarousel(images);});
+    currentSlide=(currentSlide+1)%carouselImages.length;
 }
-setInterval(()=>{currentSlide++; loadImages();},5000);
+setInterval(updateCarousel,5000);
 
 // Buttons
 document.getElementById("selectAllBtn").addEventListener("click",()=>{document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=true);});
@@ -271,13 +285,13 @@ document.getElementById("downloadSelectedBtn").addEventListener("click", async (
 document.querySelectorAll(".sidebar a").forEach(link=>{
     link.addEventListener("click", (e)=>{
         e.preventDefault();
-        const cat = link.dataset.category;
-        loadImages(cat, searchBar.value);
+        currentFilter = link.dataset.category;
+        loadImages(currentFilter, searchBar.value);
     });
 });
 
 // Search
-searchBar.addEventListener("input",(e)=>loadImages("all", e.target.value));
+searchBar.addEventListener("input",(e)=>loadImages(currentFilter,e.target.value));
 
 // Initial load
 loadImages();
