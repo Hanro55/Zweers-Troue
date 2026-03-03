@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zweers Troue Gallery Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
 body::before{
     content:"";
@@ -11,7 +12,7 @@ body::before{
     background:url('Wedding.jpg') no-repeat center center;
     background-size:cover; opacity:0.3; z-index:-1;
 }
-body{margin:0; font-family:Arial, sans-serif; background:#000; color:#fff;}
+body{margin:0; font-family:'Poppins', sans-serif; background:#000; color:#fff;}
 .container{max-width:1000px;margin:0 auto;padding:20px;}
 h1{text-align:center;font-size:32px;color:#fff;}
 p{text-align:center;font-size:18px;color:#ccc;}
@@ -34,33 +35,41 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
 .gallery-item img{width:100%;border-radius:10px;cursor:pointer;opacity:0;animation:fadeIn 0.5s forwards;}
 @keyframes fadeIn{to{opacity:1;}}
 .checkbox-container{position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.5);padding:2px 6px;border-radius:5px;}
-.gallery-info{font-size:12px;padding:3px 6px;text-align:left;color:#fff;}
+.gallery-info{font-size:12px;padding:5px 6px;text-align:left;color:#fff; line-height:1.3;}
+.gallery-info span.name{font-weight:600;}
+.gallery-info span.message{font-style:italic;}
 
 /* Carousel */
 .carousel{position:relative;width:100%;max-height:300px;margin-bottom:20px;overflow:hidden;border-radius:10px;}
 .carousel img{width:100%;height:300px;object-fit:cover;}
 .carousel-caption{position:absolute;bottom:10px;left:10px;color:#fff;font-size:20px;background:rgba(0,0,0,0.5);padding:5px 10px;border-radius:5px;}
 .carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:white;border:none;font-size:24px;padding:10px;border-radius:50%;cursor:pointer;}
-.carousel-btn.left{left:10px;} .carousel-btn.right{right:10px;}
+.carousel-btn.left{left:10px;} 
+.carousel-btn.right{right:10px;}
 
 /* Sidebar */
 .sidebar{position:fixed;left:0;top:0;height:100%;width:220px;background:rgba(0,0,0,0.9);color:#fff;overflow-x:hidden;transition:width 0.3s;padding-top:60px;z-index:1000;}
 .sidebar.collapsed{width:0;padding:0;}
 .sidebar a{display:block;padding:10px 20px;text-decoration:none;color:white;}
 .sidebar a:hover{background:#111;}
-#sidebarToggle{position:fixed;left:230px;top:15px;background:#ff4da6;border-radius:50%;width:40px;height:40px;border:none;cursor:pointer;color:#fff;font-size:24px;z-index:1100;}
+#sidebarToggle{position:fixed;left:10px;top:15px;background:#ff4da6;border-radius:50%;width:40px;height:40px;border:none;cursor:pointer;color:#fff;font-size:24px;z-index:1100;}
 #sidebarToggle:hover{background:#e60084;}
 
 /* Search bar */
-#searchBar{width:100%;max-width:300px;padding:5px;margin:10px auto;border-radius:5px;border:none;display:block;font-size:16px;}
+#searchBar{width:100%;max-width:300px;padding:5px;margin:10px auto;border-radius:15px;border:none;display:block;font-size:16px;}
+
+/* Stats */
+.stats{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;margin:15px auto;font-size:14px;color:#fff;}
+.stat-card{background:rgba(255,255,255,0.1); padding:10px 15px; border-radius:12px; text-align:center; min-width:120px;}
+
+/* Inputs */
+#uploaderName,#categorySelect,#memoryMsg{background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.3); color:#fff; padding:8px 12px; border-radius:15px; font-size:16px; margin:5px; width:calc(100%-20px);}
+#uploaderName::placeholder,#memoryMsg::placeholder{color:rgba(255,255,255,0.6);}
 
 /* Lightbox */
 #lightboxOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:none;justify-content:center;align-items:center;z-index:2000;}
 #lightboxOverlay img{max-width:90%;max-height:90%;border-radius:10px;}
 #lightboxOverlay span{position:absolute;top:20px;right:30px;font-size:30px;color:white;cursor:pointer;}
-
-/* Stats */
-.stats{display:flex;justify-content:center;gap:20px;margin:15px auto;font-size:14px;color:#fff;}
 </style>
 </head>
 <body>
@@ -93,15 +102,15 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
     <!-- Drop area -->
     <div id="drop-area">
         <input type="file" id="fileInput" hidden>
-        <input type="text" id="uploaderName" placeholder="Jou naam" style="margin:5px; padding:5px; border-radius:5px;">
-        <select id="categorySelect" style="margin:5px; padding:5px; border-radius:5px;">
+        <input type="text" id="uploaderName" placeholder="Jou naam">
+        <select id="categorySelect">
             <option value="family">Family</option>
             <option value="bride">Bride</option>
             <option value="groom">Groom</option>
             <option value="friends">Friends</option>
             <option value="other">Other</option>
         </select>
-        <input type="text" id="memoryMsg" placeholder="Jou boodskap" style="margin:5px; padding:5px; border-radius:5px;">
+        <input type="text" id="memoryMsg" placeholder="Jou boodskap">
         <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
         <p>Of sleep jou foto hierheen</p>
     </div>
@@ -206,7 +215,7 @@ async function loadImages(filterCategory="all", searchName=""){
             const meta = metaData.customMetadata || {};
             const category = meta.category || "other";
             const message = meta.message || "";
-            const likes = meta.likes || "0";
+            let likes = meta.likes || "0";
             const featured = meta.featured || "false";
 
             if(filterCategory!=="all" && filterCategory!==category) continue;
@@ -225,10 +234,22 @@ async function loadImages(filterCategory="all", searchName=""){
                 else { alert("Wrong password!"); }
             }
 
-            const infoDiv=document.createElement("div"); infoDiv.className="gallery-info";
-            infoDiv.innerHTML=`👤 ${uploader} | 📂 ${category}<br>${message}<br>❤️ ${likes}`;
+            const likeBtn=document.createElement("button"); likeBtn.innerText=`❤️ ${likes}`;
+            likeBtn.style.border="none"; likeBtn.style.background="transparent"; likeBtn.style.color="#ff4da6"; likeBtn.style.cursor="pointer";
+            likeBtn.onclick=async ()=>{
+                likes = parseInt(likes)+1;
+                await updateMetadata(item,{customMetadata:{...meta, likes:likes.toString()}});
+                loadImages(currentFilter, searchBar.value);
+            }
 
-            div.appendChild(img); div.appendChild(checkboxContainer); div.appendChild(deleteBtn); div.appendChild(infoDiv);
+            const infoDiv=document.createElement("div"); infoDiv.className="gallery-info";
+            infoDiv.innerHTML=`<span class="name">👤 ${uploader}</span> | 📂 ${category}<br><span class="message">${message}</span>`;
+
+            div.appendChild(img);
+            div.appendChild(checkboxContainer);
+            div.appendChild(deleteBtn);
+            div.appendChild(likeBtn);
+            div.appendChild(infoDiv);
             gallery.appendChild(div);
 
             allImages.push({url:img.src, uploader, category, message, likes, featured});
@@ -244,7 +265,11 @@ async function loadImages(filterCategory="all", searchName=""){
     let topUploader = "None";
     let topCount =0;
     for(const [user,count] of Object.entries(uploaderCount)){if(count>topCount){topUploader=user; topCount=count;}}
-    statsDiv.innerHTML=`📸 ${totalPhotos} Fotos | 👥 ${totalUsers} Gaste | 🔥 Meeste uploads: ${topUploader} (${topCount})`;
+    statsDiv.innerHTML="";
+    const totalCard=document.createElement("div"); totalCard.className="stat-card"; totalCard.innerText=`📸 Total Photos\n${totalPhotos}`;
+    const userCard=document.createElement("div"); userCard.className="stat-card"; userCard.innerText=`👥 Total Users\n${totalUsers}`;
+    const topCard=document.createElement("div"); topCard.className="stat-card"; topCard.innerText=`🔥 Top Uploader\n${topUploader} (${topCount})`;
+    statsDiv.appendChild(totalCard); statsDiv.appendChild(userCard); statsDiv.appendChild(topCard);
 
     // Update carousel
     carouselImages = allImages.filter(img=>img.featured==="true").slice(-5);
