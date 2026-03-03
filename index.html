@@ -6,86 +6,95 @@
 <title>Zweers Troue Gallery</title>
 
 <style>
-body{
-    margin:0;
-    font-family: Arial, sans-serif;
-    background:#000;
-    color:white;
-}
 
-/* SIDEBAR */
-.sidebar{
-    position:fixed;
-    left:0;
+/* FADED BACKGROUND */
+body::before {
+    content: "";
+    position: fixed;
     top:0;
-    height:100%;
-    width:220px;
-    background:rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    padding:20px;
-}
-.sidebar h2{
-    text-align:center;
-}
-.sidebar button{
+    left:0;
     width:100%;
-    margin:10px 0;
-    padding:10px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
+    height:100%;
+    background: url('Wedding.jpg') no-repeat center center;
+    background-size: cover;
+    opacity: 0.30;
+    z-index: -1;
 }
 
-/* MAIN */
-.main{
-    margin-left:240px;
-    padding:20px;
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #000;
+    color: #fff;
+    text-align: center;
+}
+
+.container{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
 }
 
 /* CAROUSEL */
 .carousel{
-    position:relative;
-    height:300px;
+    width:100%;
+    height:250px;
     overflow:hidden;
     border-radius:20px;
     margin-bottom:30px;
 }
 .carousel img{
     width:100%;
-    height:300px;
+    height:250px;
     object-fit:cover;
 }
 
-/* UPLOAD */
-.upload-box{
-    margin:20px 0;
+/* BUTTONS */
+button{
+    border:none;
+    border-radius:30px;
+    font-size:16px;
+    cursor:pointer;
+    margin:5px;
+    transition:0.3s;
+}
+
+.upload-btn{ background:#ff4da6; color:white; padding:15px 30px;}
+.upload-btn:hover{ background:#e60084;}
+
+.like-btn{ background:transparent; color:#ff4da6; font-weight:bold;}
+
+.filter-btn{ background:#4da6ff; color:white; padding:10px 20px;}
+.filter-btn:hover{ background:#0080ff;}
+
+#drop-area {
+    border: 2px dashed #fff;
+    padding: 20px;
+    border-radius: 20px;
+    margin: 20px 0;
 }
 
 /* GALLERY */
 .gallery{
+    margin-top:40px;
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
     gap:20px;
 }
+
 .card{
-    background:rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.08);
     padding:10px;
     border-radius:15px;
-    position:relative;
 }
+
 .card img{
     width:100%;
-    border-radius:10px;
+    border-radius:15px;
     cursor:pointer;
 }
-.like{
-    cursor:pointer;
-    color:#ff4da6;
-}
-.stats{
-    margin:20px 0;
-    font-size:18px;
-}
+
+/* LIGHTBOX */
 .lightbox{
     display:none;
     position:fixed;
@@ -97,23 +106,33 @@ body{
     justify-content:center;
     align-items:center;
 }
+
 .lightbox img{
     max-width:90%;
     max-height:90%;
+    border-radius:20px;
 }
+
+.stats{
+    margin:20px 0;
+    font-size:18px;
+    color:#ff4da6;
+}
+
+.confetti-message{
+    margin-top:10px;
+    color:#ff4da6;
+    font-weight:bold;
+}
+
 </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <h2>💍 Zweers Troue</h2>
-    <button onclick="filterBy('all')">Alle Fotos</button>
-    <div id="userFilters"></div>
-</div>
+<div class="container">
 
-<div class="main">
-
-<h1>📸 Troue Herinneringe</h1>
+<h1>📸 Zweers Troue Gallery</h1>
+<p>Upload jou photos en los 'n boodskap ❤️</p>
 
 <div class="stats" id="stats"></div>
 
@@ -121,10 +140,15 @@ body{
     <img id="carouselImage">
 </div>
 
-<div class="upload-box">
-    <input type="file" id="fileInput">
-    <button onclick="uploadPhoto()">Upload</button>
+<div id="drop-area">
+    <input type="file" id="fileInput" hidden>
+    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
+    <p>Of sleep jou foto hierheen</p>
 </div>
+
+<div id="userFilters"></div>
+
+<div class="confetti-message" id="confettiMessage"></div>
 
 <div class="gallery" id="gallery"></div>
 
@@ -135,13 +159,14 @@ body{
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getStorage, ref, uploadBytes, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
 import { getFirestore, collection, addDoc, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "YOUR KEY",
-    authDomain: "YOUR DOMAIN",
+    apiKey: "JOU KEY HIER",
+    authDomain: "zweers-troue.firebaseapp.com",
     projectId: "zweers-troue",
     storageBucket: "zweers-troue.firebasestorage.app",
     messagingSenderId: "584236352490",
@@ -152,20 +177,20 @@ const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 const db = getFirestore(app);
 
-let photos = [];
-let currentFilter = "all";
+let photos=[];
+let currentFilter="all";
 
 /* UPLOAD */
-async function uploadPhoto(){
-    const file = document.getElementById("fileInput").files[0];
+document.getElementById("fileInput").addEventListener("change", async (e)=>{
+    const file=e.target.files[0];
     if(!file) return;
 
-    const name = prompt("Wat is jou naam?");
-    const message = prompt("Los 'n boodskap vir die bruid en bruidegom:");
+    const name=prompt("Wat is jou naam?");
+    const message=prompt("Los 'n boodskap:");
 
-    const storageRef = ref(storage, "photos/"+Date.now()+"_"+file.name);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
+    const storageRef=ref(storage,"photos/"+Date.now()+"_"+file.name);
+    await uploadBytes(storageRef,file);
+    const url=await getDownloadURL(storageRef);
 
     await addDoc(collection(db,"photos"),{
         url:url,
@@ -174,12 +199,13 @@ async function uploadPhoto(){
         likes:0
     });
 
+    showConfetti();
     loadPhotos();
-}
+});
 
 /* LOAD */
 async function loadPhotos(){
-    const snapshot = await getDocs(collection(db,"photos"));
+    const snapshot=await getDocs(collection(db,"photos"));
     photos=[];
     snapshot.forEach(doc=>{
         photos.push({id:doc.id,...doc.data()});
@@ -188,76 +214,77 @@ async function loadPhotos(){
     renderGallery();
     renderStats();
     renderCarousel();
-    renderUserFilters();
+    renderFilters();
 }
 
 function renderGallery(){
-    const gallery = document.getElementById("gallery");
+    const gallery=document.getElementById("gallery");
     gallery.innerHTML="";
 
-    photos.filter(p=> currentFilter==="all" || p.name===currentFilter)
+    photos.filter(p=>currentFilter==="all"||p.name===currentFilter)
     .forEach(photo=>{
-        const div = document.createElement("div");
+        const div=document.createElement("div");
         div.className="card";
-
         div.innerHTML=`
             <img src="${photo.url}" onclick="openLightbox('${photo.url}')">
             <p><strong>${photo.name}</strong></p>
             <p>${photo.message}</p>
-            <p class="like" onclick="likePhoto('${photo.id}',${photo.likes})">❤️ ${photo.likes}</p>
+            <button class="like-btn" onclick="likePhoto('${photo.id}',${photo.likes})">❤️ ${photo.likes}</button>
         `;
-
         gallery.appendChild(div);
     });
 }
 
 function renderStats(){
-    const total = photos.length;
-    const users = [...new Set(photos.map(p=>p.name))].length;
-    document.getElementById("stats").innerText =
-        `📸 ${total} Fotos | 👥 ${users} Gaste het opgelaai`;
+    const total=photos.length;
+    const users=[...new Set(photos.map(p=>p.name))].length;
+    document.getElementById("stats").innerText=
+    `📸 ${total} Fotos | 👥 ${users} Gaste`;
 }
 
 function renderCarousel(){
     if(photos.length===0) return;
     let index=0;
-    const img = document.getElementById("carouselImage");
-    img.src = photos[0].url;
+    const img=document.getElementById("carouselImage");
+    img.src=photos[0].url;
     setInterval(()=>{
         index=(index+1)%photos.length;
-        img.src = photos[index].url;
-    },3000);
+        img.src=photos[index].url;
+    },4000);
 }
 
-function renderUserFilters(){
-    const container = document.getElementById("userFilters");
+function renderFilters(){
+    const container=document.getElementById("userFilters");
     const names=[...new Set(photos.map(p=>p.name))];
-    container.innerHTML="";
+    container.innerHTML='<button class="filter-btn" onclick="filterBy(\'all\')">Alle Fotos</button>';
     names.forEach(name=>{
-        const btn=document.createElement("button");
-        btn.innerText=name;
-        btn.onclick=()=>filterBy(name);
-        container.appendChild(btn);
+        container.innerHTML+=`<button class="filter-btn" onclick="filterBy('${name}')">${name}</button>`;
     });
 }
 
-window.filterBy = function(name){
+window.filterBy=function(name){
     currentFilter=name;
     renderGallery();
 }
 
-window.likePhoto = async function(id,currentLikes){
-    const photoRef = doc(db,"photos",id);
+window.likePhoto=async function(id,currentLikes){
+    const photoRef=doc(db,"photos",id);
     await updateDoc(photoRef,{likes:currentLikes+1});
     loadPhotos();
 }
 
-window.openLightbox = function(url){
+window.openLightbox=function(url){
     document.getElementById("lightboxImg").src=url;
     document.getElementById("lightbox").style.display="flex";
 }
-window.closeLightbox = function(){
+window.closeLightbox=function(){
     document.getElementById("lightbox").style.display="none";
+}
+
+function showConfetti(){
+    const msg=document.getElementById("confettiMessage");
+    msg.innerText="🎉 Dankie! Jou foto is nou deel van die herinneringe!";
+    setTimeout(()=>{msg.innerText="";},3000);
 }
 
 loadPhotos();
