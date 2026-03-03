@@ -7,148 +7,157 @@
 
 <style>
 
-/* BACKGROUND IMAGE */
-body::before {
-content: "";
-position: fixed;
-top:0; left:0;
-width:100%; height:100%;
-background: url('Wedding.jpg') no-repeat center center;
-background-size: cover;
-opacity: 0.30;
-z-index: -1;
+/* BACKGROUND */
+body::before{
+content:"";
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:url('Wedding.jpg') no-repeat center center;
+background-size:cover;
+opacity:0.30;
+z-index:-1;
 }
 
-/* GENERAL */
-body {
+body{
 margin:0;
-font-family: 'Segoe UI', Arial, sans-serif;
+font-family:'Segoe UI',sans-serif;
 background:#000;
 color:#fff;
-text-align:center;
+overflow-x:hidden;
 }
 
-.container{
-max-width:1100px;
-margin:0 auto;
+/* SIDEBAR */
+.sidebar{
+position:fixed;
+left:0;
+top:0;
+height:100%;
+width:250px;
+background:rgba(0,0,0,0.85);
+padding:20px;
+transition:0.4s;
+z-index:1000;
+}
+
+.sidebar.collapsed{
+width:70px;
+}
+
+.sidebar h3{
+color:#ff66cc;
+}
+
+.sidebar button{
+display:block;
+width:100%;
+margin:10px 0;
+padding:10px;
+border:none;
+border-radius:20px;
+background:#ff4da6;
+color:#fff;
+cursor:pointer;
+}
+
+.toggle-btn{
+position:absolute;
+top:20px;
+right:-15px;
+background:#ff4da6;
+border-radius:50%;
+width:30px;
+height:30px;
+cursor:pointer;
+}
+
+/* MAIN CONTENT */
+.main{
+margin-left:260px;
 padding:40px 20px;
+transition:0.4s;
 }
 
-h1 {
-font-size:32px;
-margin-bottom:10px;
-}
-
-p {
-font-size:18px;
-color:#ddd;
+.sidebar.collapsed + .main{
+margin-left:80px;
 }
 
 /* BUTTONS */
 button{
 border:none;
 border-radius:30px;
-font-size:16px;
+font-size:15px;
 cursor:pointer;
 margin:5px;
 transition:0.3s;
-box-shadow:0 4px 10px rgba(0,0,0,0.3);
 }
 
-button:hover{
-transform:scale(1.05);
-}
+.upload-btn{background:#ff4da6;color:white;padding:14px 28px;}
+.download-btn{background:#4da6ff;color:white;padding:14px 24px;}
+.select-all-btn{background:#00ff99;color:black;padding:14px 24px;}
+.deselect-all-btn{background:#ffcc00;color:black;padding:14px 24px;}
 
-.upload-btn{ background:#ff4da6; color:white; padding:14px 28px;}
-.upload-btn:hover{ background:#e60084;}
+button:hover{transform:scale(1.05);}
 
-.download-btn{ background:#4da6ff; color:white; padding:14px 24px;}
-.download-btn:hover{ background:#0080ff;}
-
-.select-all-btn{ background:#00ff99; color:black; padding:14px 24px;}
-.select-all-btn:hover{ background:#00cc7a;}
-
-.deselect-all-btn{ background:#ffcc00; color:black; padding:14px 24px;}
-.deselect-all-btn:hover{ background:#e6b800;}
-
-.delete-btn{
-background:#ff3333;
-color:white;
-font-size:13px;
-padding:5px 10px;
-position:absolute;
-bottom:8px;
-right:8px;
-}
-
-/* DROP AREA */
+/* DROP */
 #drop-area{
 border:2px dashed #fff;
 padding:30px;
 border-radius:20px;
 margin:20px 0;
-transition:0.3s;
 background:rgba(255,255,255,0.05);
-}
-
-#drop-area.hover{
-background:rgba(255,255,255,0.15);
-}
-
-/* CONTROLS */
-.controls{
-display:flex;
-justify-content:center;
-flex-wrap:wrap;
-gap:10px;
-margin-bottom:20px;
 }
 
 /* GALLERY */
 .gallery{
-margin-top:40px;
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
 gap:15px;
-padding:20px;
+margin-top:30px;
 }
 
 .gallery-item{
 position:relative;
-transition:0.3s;
 }
 
 .gallery-item img{
 width:100%;
 border-radius:15px;
 cursor:pointer;
-opacity:0;
-animation:fadeIn 0.6s forwards;
-box-shadow:0 8px 20px rgba(0,0,0,0.4);
+box-shadow:0 8px 20px rgba(0,0,0,0.5);
+transition:0.3s;
 }
 
 .gallery-item img:hover{
-transform:scale(1.03);
+transform:scale(1.05);
 }
 
-@keyframes fadeIn{
-to{opacity:1;}
-}
-
-.checkbox-container{
+.like-btn{
 position:absolute;
-top:8px;
+bottom:8px;
 left:8px;
-background:rgba(0,0,0,0.6);
-padding:3px 6px;
-border-radius:6px;
+background:#ff66cc;
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
 }
 
-.confetti-message{
-margin-top:10px;
-color:#ff4da6;
-font-weight:bold;
-font-size:18px;
+/* FULLSCREEN */
+.fullscreen{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.9);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:2000;
+}
+
+.fullscreen img{
+max-width:90%;
+max-height:90%;
+border-radius:20px;
 }
 
 /* MESSAGE BOARD */
@@ -157,53 +166,38 @@ margin-top:60px;
 padding:30px;
 border-radius:25px;
 background:rgba(255,255,255,0.08);
-backdrop-filter: blur(8px);
-box-shadow:0 10px 40px rgba(0,0,0,0.5);
-}
-
-.message-board h2{
-margin-bottom:20px;
-color:#ffccff;
+backdrop-filter:blur(10px);
 }
 
 .message-board input,
 .message-board textarea{
 width:100%;
 max-width:600px;
-padding:12px;
 margin:10px auto;
+padding:10px;
 border-radius:15px;
 border:none;
 display:block;
-font-size:15px;
-}
-
-.message-board textarea{
-resize:none;
-height:100px;
-}
-
-.message-board button{
-background:#ff66cc;
-color:white;
-padding:12px 25px;
-}
-
-.messages{
-margin-top:20px;
 }
 
 .single-message{
-background:rgba(0,0,0,0.4);
+background:rgba(0,0,0,0.5);
 padding:15px;
 border-radius:15px;
 margin:10px auto;
 max-width:600px;
-text-align:left;
 }
 
-.single-message strong{
-color:#ff99dd;
+/* CAROUSEL */
+.carousel{
+margin-top:50px;
+text-align:center;
+}
+
+.carousel img{
+width:80%;
+max-width:500px;
+border-radius:20px;
 }
 
 </style>
@@ -211,186 +205,148 @@ color:#ff99dd;
 
 <body>
 
-<div class="container">
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+<div class="toggle-btn" onclick="toggleSidebar()">☰</div>
+<h3>Zweers Troue</h3>
+<button onclick="startCarousel()">Start Slideshow</button>
+<button onclick="stopCarousel()">Stop Slideshow</button>
+</div>
+
+<div class="main">
 
 <h1>📸 Zweers Troue Gallery</h1>
-<p>Upload jou photos vanaf jou foon of rekenaar! ❤️</p>
 
 <div id="drop-area">
 <input type="file" id="fileInput" hidden>
-<button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
+<button class="upload-btn" onclick="fileInput.click()">Upload Photo</button>
 <p>Of sleep jou foto hierheen</p>
 </div>
 
-<div class="controls">
+<div>
 <button class="select-all-btn" id="selectAllBtn">Select All</button>
 <button class="deselect-all-btn" id="deselectAllBtn">Deselect All</button>
 <button class="download-btn" id="downloadSelectedBtn">Download Selected</button>
 </div>
 
-<div class="confetti-message" id="confettiMessage"></div>
 <div class="gallery" id="gallery"></div>
 
-<!-- MESSAGE BOARD -->
-<div class="message-board">
-<h2>💌 Los ’n Boodskap vir die Bruidspaar</h2>
-
-<input type="text" id="nameInput" placeholder="Jou Naam">
-<textarea id="messageInput" placeholder="Skryf jou boodskap hier..."></textarea>
-<button onclick="addMessage()">Stuur Boodskap</button>
-
-<div class="messages" id="messages"></div>
+<div class="carousel">
+<h2>🎞️ Troue Slideshow</h2>
+<img id="carouselImage">
 </div>
 
+<div class="message-board">
+<h2>💌 Los ’n Boodskap</h2>
+<input type="text" id="nameInput" placeholder="Jou Naam">
+<textarea id="messageInput" placeholder="Jou boodskap"></textarea>
+<button onclick="addMessage()">Stuur</button>
+<div id="messages"></div>
+</div>
+
+</div>
+
+<div class="fullscreen" id="fullscreen" onclick="closeFullscreen()">
+<img id="fullscreenImg">
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+import { getStorage, ref, uploadBytes, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+import { getDatabase, ref as dbRef, push, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyB_AVP6tZD8U4AHNLrVf9nCe-gpOHPDLM8",
-authDomain: "zweers-troue.firebaseapp.com",
-projectId: "zweers-troue",
-storageBucket: "zweers-troue.firebasestorage.app",
-messagingSenderId: "584236352490",
-appId: "1:584236352490:web:c717038090bd005e712893"
+apiKey:"AIzaSyB...",
+authDomain:"zweers-troue.firebaseapp.com",
+databaseURL:"https://zweers-troue-default-rtdb.firebaseio.com/",
+projectId:"zweers-troue",
+storageBucket:"zweers-troue.firebasestorage.app"
 };
 
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app);
-const adminPassword = "troueAdmin123";
+const app=initializeApp(firebaseConfig);
+const storage=getStorage(app);
+const database=getDatabase(app);
 
-/* UPLOAD */
-const input = document.getElementById("fileInput");
-const dropArea = document.getElementById("drop-area");
+const gallery=document.getElementById("gallery");
+let imageList=[];
+let carouselInterval;
 
-function handleFiles(file){
-const storageRef = ref(storage,"photos/"+file.name);
-uploadBytes(storageRef,file).then(()=>{
-showConfetti();
-loadImages();
-});
-}
-
-input.addEventListener("change",(e)=>{
-const file = e.target.files[0];
-if(file) handleFiles(file);
-});
-
-dropArea.addEventListener("dragover",(e)=>{
-e.preventDefault();
-dropArea.classList.add("hover");
-});
-
-dropArea.addEventListener("dragleave",(e)=>{
-e.preventDefault();
-dropArea.classList.remove("hover");
-});
-
-dropArea.addEventListener("drop",(e)=>{
-e.preventDefault();
-dropArea.classList.remove("hover");
-const file = e.dataTransfer.files[0];
-if(file) handleFiles(file);
-});
-
-/* LOAD GALLERY */
+/* LOAD IMAGES */
 async function loadImages(){
-const gallery = document.getElementById("gallery");
 gallery.innerHTML="";
-const listRef = ref(storage,"photos");
-const res = await listAll(listRef);
-
+const res=await listAll(ref(storage,"photos"));
+imageList=[];
 for(const item of res.items){
-const url = await getDownloadURL(item);
+const url=await getDownloadURL(item);
+imageList.push(url);
 
-const div = document.createElement("div");
+const div=document.createElement("div");
 div.className="gallery-item";
 
-const img = document.createElement("img");
+const img=document.createElement("img");
 img.src=url;
+img.onclick=()=>openFullscreen(url);
 
-const checkbox = document.createElement("input");
-checkbox.type="checkbox";
-checkbox.className="photo-checkbox";
-
-const checkboxContainer = document.createElement("div");
-checkboxContainer.className="checkbox-container";
-checkboxContainer.appendChild(checkbox);
-
-const deleteBtn = document.createElement("button");
-deleteBtn.className="delete-btn";
-deleteBtn.innerText="Delete";
-deleteBtn.onclick = async ()=>{
-const pass = prompt("Enter admin password to delete:");
-if(pass===adminPassword){
-await deleteObject(ref(storage,"photos/"+item.name));
-loadImages();
-}else{
-alert("Wrong password!");
-}
-};
+const like=document.createElement("button");
+like.className="like-btn";
+like.innerText="❤️ Like";
 
 div.appendChild(img);
-div.appendChild(checkboxContainer);
-div.appendChild(deleteBtn);
+div.appendChild(like);
 gallery.appendChild(div);
 }
+document.getElementById("carouselImage").src=imageList[0];
+}
+loadImages();
+
+/* FULLSCREEN */
+function openFullscreen(src){
+document.getElementById("fullscreenImg").src=src;
+document.getElementById("fullscreen").style.display="flex";
+}
+function closeFullscreen(){
+document.getElementById("fullscreen").style.display="none";
 }
 
-/* BUTTON ACTIONS */
-document.getElementById("selectAllBtn").onclick=()=>{
-document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=true);
-};
-
-document.getElementById("deselectAllBtn").onclick=()=>{
-document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=false);
-};
-
-document.getElementById("downloadSelectedBtn").onclick=async ()=>{
-const selected=[...document.querySelectorAll(".photo-checkbox")].filter(cb=>cb.checked);
-if(selected.length===0){alert("Geen foto geselekteer nie!"); return;}
-
-for(const cb of selected){
-const img=cb.closest(".gallery-item").querySelector("img");
-const response=await fetch(img.src);
-const blob=await response.blob();
-const blobUrl=URL.createObjectURL(blob);
-const a=document.createElement("a");
-a.href=blobUrl;
-a.download=img.src.split("/").pop();
-a.click();
-URL.revokeObjectURL(blobUrl);
-}
-};
-
-/* CONFETTI MESSAGE */
-function showConfetti(){
-const msg=document.getElementById("confettiMessage");
-msg.innerText="🎉 Dankie! Jou foto is nou deel van die herinneringe!";
-setTimeout(()=>{msg.innerText="";},3000);
+/* SIDEBAR */
+window.toggleSidebar=function(){
+document.getElementById("sidebar").classList.toggle("collapsed");
 }
 
-/* MESSAGE BOARD */
-function addMessage(){
+/* CAROUSEL */
+window.startCarousel=function(){
+let i=0;
+carouselInterval=setInterval(()=>{
+i=(i+1)%imageList.length;
+document.getElementById("carouselImage").src=imageList[i];
+},3000);
+}
+window.stopCarousel=function(){
+clearInterval(carouselInterval);
+}
+
+/* MESSAGE BOARD FIREBASE */
+window.addMessage=function(){
 const name=document.getElementById("nameInput").value;
 const message=document.getElementById("messageInput").value;
-
-if(!name || !message){ alert("Vul asseblief alles in!"); return;}
-
-const msgDiv=document.createElement("div");
-msgDiv.className="single-message";
-msgDiv.innerHTML=`<strong>${name}</strong><p>${message}</p>`;
-
-document.getElementById("messages").prepend(msgDiv);
-
+if(!name||!message)return alert("Vul alles in!");
+push(dbRef(database,"messages"),{name,message});
 document.getElementById("nameInput").value="";
 document.getElementById("messageInput").value="";
 }
 
-loadImages();
+onValue(dbRef(database,"messages"),snapshot=>{
+const data=snapshot.val();
+const container=document.getElementById("messages");
+container.innerHTML="";
+for(let id in data){
+const div=document.createElement("div");
+div.className="single-message";
+div.innerHTML=`<strong>${data[id].name}</strong><p>${data[id].message}</p>`;
+container.prepend(div);
+}
+});
 
 </script>
 
