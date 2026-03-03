@@ -15,7 +15,7 @@ body::before {
     height:100%;
     background: url('Wedding.jpg') no-repeat center center;
     background-size: cover;
-    opacity: 0.30;
+    opacity: 0.25;
     z-index: -1;
 }
 
@@ -26,77 +26,63 @@ body {
     color: #fff;
     text-align: center;
 }
+
 .container{
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 40px 20px;
 }
-h1 { font-size: 32px; color: #fff; }
-p { font-size: 18px; color: #ccc; }
-button {
+
+input[type="text"]{
+    padding:10px;
+    border-radius:20px;
+    border:none;
+    width:250px;
+    text-align:center;
+    margin-bottom:10px;
+}
+
+button{
     border:none;
     border-radius:30px;
-    font-size:18px;
+    font-size:16px;
     cursor:pointer;
-    margin: 5px;
-    transition: 0.3s;
+    padding:12px 20px;
+    margin:5px;
 }
-.upload-btn{ background:#ff4da6; color:white; padding:15px 30px;}
-.upload-btn:hover{ background: #e60084;}
-.download-btn{ background:#4da6ff; color:white; padding:15px 25px;}
-.download-btn:hover{ background:#0080ff;}
-.select-all-btn{ background:#00ff99; color:black; padding:15px 25px;}
-.select-all-btn:hover{ background:#00cc7a;}
-.deselect-all-btn{ background:#ffcc00; color:black; padding:15px 25px;}
-.deselect-all-btn:hover{ background:#e6b800;}
-.delete-btn{ background:#ff3333; color:white; font-size:14px; padding:5px 10px;}
-#drop-area {
-    border: 2px dashed #fff;
-    padding: 20px;
-    border-radius: 20px;
-    margin: 20px 0;
-    transition: 0.3s;
-}
-#drop-area.hover { background: rgba(255,255,255,0.1);}
+
+.upload-btn{ background:#ff4da6; color:white; }
+.download-btn{ background:#4da6ff; color:white; }
+.select-btn{ background:#00ff99; color:black; }
+.deselect-btn{ background:#ffcc00; color:black; }
+.delete-btn{ background:#ff3333; color:white; font-size:12px; padding:5px 10px; }
+
 .gallery{
     margin-top:40px;
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
     gap:15px;
-    padding:20px;
 }
+
 .gallery-item{
-    position: relative;
-    display: inline-block;
-    transition: 0.3s;
+    position:relative;
 }
+
 .gallery-item img{
     width:100%;
     border-radius:15px;
-    cursor:pointer;
-    opacity: 0;
-    animation: fadeIn 0.5s forwards;
 }
-@keyframes fadeIn { to {opacity:1;} }
-.checkbox-container{
+
+.checkbox{
     position:absolute;
     top:8px;
     left:8px;
-    background: rgba(0,0,0,0.5);
-    padding:2px 6px;
-    border-radius:5px;
 }
-.confetti-message{
-    margin-top: 10px;
-    color:#ff4da6;
-    font-weight:bold;
-}
-.controls {
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-bottom: 20px;
+
+.delete-btn{
+    position:absolute;
+    bottom:8px;
+    right:8px;
 }
 </style>
 </head>
@@ -104,150 +90,141 @@ button {
 
 <div class="container">
     <h1>📸 Zweers Troue Gallery</h1>
-    <p>Upload jou photos vanaf jou foon of rekenaar! ❤️</p>
+    <p>Upload jou fotos ❤️</p>
 
-    <div id="drop-area">
-        <input type="file" id="fileInput" hidden>
-        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
-        <p>Of sleep jou foto hierheen</p>
+    <input type="text" id="uploaderName" placeholder="Jou Naam & Van" required><br>
+
+    <input type="file" id="fileInput" hidden>
+    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
+
+    <div>
+        <button class="select-btn" id="selectAllBtn">Select All</button>
+        <button class="deselect-btn" id="deselectAllBtn">Deselect All</button>
+        <button class="download-btn" id="downloadBtn">Download Selected</button>
     </div>
-
-    <div class="controls">
-        <button class="select-all-btn" id="selectAllBtn">Select All</button>
-        <button class="deselect-all-btn" id="deselectAllBtn">Deselect All</button>
-        <button class="download-btn" id="downloadSelectedBtn">Download Selected</button>
-    </div>
-
-    <div class="confetti-message" id="confettiMessage"></div>
 
     <div class="gallery" id="gallery"></div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject } 
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyB_AVP6tZD8U4AHNLrVf9nCe-gpOHPDLM8",
+    apiKey: "YOUR_KEY",
     authDomain: "zweers-troue.firebaseapp.com",
     projectId: "zweers-troue",
     storageBucket: "zweers-troue.firebasestorage.app",
     messagingSenderId: "584236352490",
-    appId: "1:584236352490:web:c717038090bd005e712893",
-    measurementId: "G-JBWM0TNSM4"
+    appId: "1:584236352490:web:c717038090bd005e712893"
 };
 
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
+
 const adminPassword = "troueAdmin123";
+const downloadPassword = "download123";
+
+const fileInput = document.getElementById("fileInput");
+const gallery = document.getElementById("gallery");
 
 // Upload
-const input = document.getElementById("fileInput");
-const dropArea = document.getElementById("drop-area");
-
-function handleFiles(file){
-    const storageRef = ref(storage,"photos/"+file.name);
-    uploadBytes(storageRef,file).then(()=>{ showConfetti(); loadImages(); });
-}
-
-input.addEventListener("change",(e)=>{
+fileInput.addEventListener("change", async (e)=>{
     const file = e.target.files[0];
-    if(file) handleFiles(file);
+    const name = document.getElementById("uploaderName").value.trim();
+
+    if(!file || !name){
+        alert("Sit asseblief jou naam in.");
+        return;
+    }
+
+    const safeName = name.replace(/\s+/g,"_");
+    const storageRef = ref(storage, `photos/${safeName}/${file.name}`);
+    await uploadBytes(storageRef,file);
+    alert("Foto suksesvol opgelaai!");
+    loadImages();
 });
 
-dropArea.addEventListener("dragover",(e)=>{ e.preventDefault(); dropArea.classList.add("hover"); });
-dropArea.addEventListener("dragleave",(e)=>{ e.preventDefault(); dropArea.classList.remove("hover"); });
-dropArea.addEventListener("drop",(e)=>{
-    e.preventDefault();
-    dropArea.classList.remove("hover");
-    const file = e.dataTransfer.files[0];
-    if(file) handleFiles(file);
-});
-
-// Load gallery
+// Load images grouped by folder
 async function loadImages(){
-    const gallery = document.getElementById("gallery");
     gallery.innerHTML="";
-    const listRef = ref(storage,"photos");
-    const res = await listAll(listRef);
+    const mainRef = ref(storage,"photos");
+    const folders = await listAll(mainRef);
 
-    for(const item of res.items){
-        const url = await getDownloadURL(item);
-        const div = document.createElement("div");
-        div.className="gallery-item";
+    for(const folder of folders.prefixes){
+        const files = await listAll(folder);
 
-        const img = document.createElement("img");
-        img.src=url;
+        for(const file of files.items){
+            const url = await getDownloadURL(file);
 
-        const checkbox = document.createElement("input");
-        checkbox.type="checkbox";
-        checkbox.className="photo-checkbox";
+            const div = document.createElement("div");
+            div.className="gallery-item";
 
-        const checkboxContainer = document.createElement("div");
-        checkboxContainer.className="checkbox-container";
-        checkboxContainer.appendChild(checkbox);
+            const img = document.createElement("img");
+            img.src=url;
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.className="delete-btn";
-        deleteBtn.innerText="Delete";
-        deleteBtn.onclick = async ()=>{
-            const pass = prompt("Enter admin password to delete this photo:");
-            if(pass===adminPassword){
-                await deleteObject(ref(storage,"photos/"+item.name));
-                loadImages();
-            } else { alert("Wrong password!"); }
+            const checkbox = document.createElement("input");
+            checkbox.type="checkbox";
+            checkbox.className="photoCheck checkbox";
+            checkbox.dataset.url = url;
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.innerText="Delete";
+            deleteBtn.className="delete-btn";
+            deleteBtn.onclick = async ()=>{
+                const pass = prompt("Admin password:");
+                if(pass===adminPassword){
+                    await deleteObject(file);
+                    loadImages();
+                } else alert("Verkeerde password!");
+            }
+
+            div.appendChild(img);
+            div.appendChild(checkbox);
+            div.appendChild(deleteBtn);
+            gallery.appendChild(div);
         }
-
-        div.appendChild(img);
-        div.appendChild(checkboxContainer);
-        div.appendChild(deleteBtn);
-        gallery.appendChild(div);
     }
 }
 
-// 🔹 Button actions (always works, even if gallery just loaded)
-document.getElementById("selectAllBtn").addEventListener("click", ()=>{
-    document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=true);
-});
-document.getElementById("deselectAllBtn").addEventListener("click", ()=>{
-    document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=false);
-});
-document.getElementById("downloadSelectedBtn").addEventListener("click", async ()=>{
-    const checkboxes = document.querySelectorAll(".gallery-item input.photo-checkbox");
-    const selected = Array.from(checkboxes).filter(cb=>cb.checked);
+// Select All
+document.getElementById("selectAllBtn").onclick = ()=>{
+    document.querySelectorAll(".photoCheck").forEach(cb=>cb.checked=true);
+};
 
-    if(selected.length === 0){ alert("Geen foto geselekteer nie!"); return; }
+// Deselect All
+document.getElementById("deselectAllBtn").onclick = ()=>{
+    document.querySelectorAll(".photoCheck").forEach(cb=>cb.checked=false);
+};
 
-    for(const cb of selected){
-        const img = cb.closest(".gallery-item").querySelector("img");
-        try{
-            // Fetch image as blob
-            const response = await fetch(img.src, { mode: 'cors' });
-            const blob = await response.blob();
-            const blobUrl = URL.createObjectURL(blob);
-
-            const a = document.createElement("a");
-            a.href = blobUrl;
-            a.download = img.src.split("/").pop();
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            URL.revokeObjectURL(blobUrl);
-        } catch(err){
-            console.error("Download failed:", err);
-            alert("Kon nie foto aflaai nie. Probeer asseblief weer.");
-        }
+// Download Selected
+document.getElementById("downloadBtn").onclick = ()=>{
+    const pass = prompt("Download password:");
+    if(pass!==downloadPassword){
+        alert("Verkeerde password!");
+        return;
     }
-});
+
+    const selected = document.querySelectorAll(".photoCheck:checked");
+
+    if(selected.length===0){
+        alert("Geen fotos geselekteer nie!");
+        return;
+    }
+
+    selected.forEach(cb=>{
+        const a = document.createElement("a");
+        a.href = cb.dataset.url;
+        a.download = "";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+};
 
 loadImages();
-
-function showConfetti(){
-    const msg = document.getElementById("confettiMessage");
-    msg.innerText="🎉 Dankie! Jou foto is nou deel van die herinneringe!";
-    setTimeout(()=>{msg.innerText="";},3000);
-}
 </script>
+
 </body>
 </html>
-
