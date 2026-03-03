@@ -5,192 +5,93 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zweers Troue Gallery</title>
 <style>
-/* Background fade image */
-body::before {
-    content: "";
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: url('Wedding.jpg') no-repeat center center;
-    background-size: cover;
-    opacity: 0.30;
-    z-index: -1;
+body::before{
+    content:"";
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:url('Wedding.jpg') no-repeat center center;
+    background-size:cover; opacity:0.3; z-index:-1;
 }
-
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #000;
-    color: #fff;
-}
-
-/* Container for main content */
-.container{
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Header */
-h1 { font-size: 32px; color: #fff; text-align: center; }
-p { font-size: 18px; color: #ccc; text-align: center; }
+body{margin:0; font-family:Arial, sans-serif; background:#000; color:#fff;}
+.container{max-width:1000px;margin:0 auto;padding:20px;}
+h1{text-align:center;font-size:32px;color:#fff;}
+p{text-align:center;font-size:18px;color:#ccc;}
 
 /* Buttons */
-button {
-    border:none;
-    border-radius:30px;
-    font-size:16px;
-    cursor:pointer;
-    margin: 5px;
-    transition: 0.3s;
-}
-.upload-btn{ background:#ff4da6; color:white; padding:12px 25px;}
-.upload-btn:hover{ background: #e60084;}
-.download-btn{ background:#4da6ff; color:white; padding:12px 20px;}
-.download-btn:hover{ background:#0080ff;}
-.select-all-btn{ background:#00ff99; color:black; padding:12px 20px;}
-.select-all-btn:hover{ background:#00cc7a;}
-.deselect-all-btn{ background:#ffcc00; color:black; padding:12px 20px;}
-.deselect-all-btn:hover{ background:#e6b800;}
-.delete-btn{ background:#ff3333; color:white; font-size:14px; padding:5px 10px;}
+button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;transition:0.3s;}
+.upload-btn{background:#ff4da6;color:white;padding:12px 25px;}
+.upload-btn:hover{background:#e60084;}
+.download-btn{background:#4da6ff;color:white;padding:12px 20px;}
+.download-btn:hover{background:#0080ff;}
+.select-all-btn{background:#00ff99;color:black;padding:12px 20px;}
+.select-all-btn:hover{background:#00cc7a;}
+.deselect-all-btn{background:#ffcc00;color:black;padding:12px 20px;}
+.deselect-all-btn:hover{background:#e6b800;}
+.delete-btn{background:#ff3333;color:white;font-size:14px;padding:5px 10px;}
 
 /* Drop area */
-#drop-area {
-    border: 2px dashed #fff;
-    padding: 20px;
-    border-radius: 20px;
-    margin: 20px 0;
-    text-align: center;
-    transition: 0.3s;
-}
-#drop-area.hover { background: rgba(255,255,255,0.1); }
-
-/* Confetti message */
-.confetti-message{
-    margin-top: 10px;
-    color:#ff4da6;
-    font-weight:bold;
-    text-align:center;
-}
+#drop-area{border:2px dashed #fff;padding:20px;border-radius:20px;margin:20px 0;text-align:center;transition:0.3s;}
+#drop-area.hover{background:rgba(255,255,255,0.1);}
 
 /* Controls */
-.controls {
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-bottom: 20px;
-}
+.controls{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
 
 /* Gallery grid */
-.gallery{
-    margin-top:20px;
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-    gap:10px;
-    padding:10px;
-}
-.gallery-item{
-    position: relative;
-    display: inline-block;
-    transition: 0.3s;
-    background: rgba(255,255,255,0.05);
-    border-radius: 10px;
-    overflow: hidden;
-}
-.gallery-item img{
-    width:100%;
-    border-radius:10px;
-    cursor:pointer;
-    opacity:0;
-    animation: fadeIn 0.5s forwards;
-}
-@keyframes fadeIn { to {opacity:1;} }
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;padding:10px;margin-top:20px;}
+.gallery-item{position:relative;display:inline-block;transition:0.3s;background:rgba(255,255,255,0.05);border-radius:10px;overflow:hidden;}
+.gallery-item img{width:100%;border-radius:10px;cursor:pointer;opacity:0;animation:fadeIn 0.5s forwards;}
+@keyframes fadeIn{to{opacity:1;}}
+.checkbox-container{position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.5);padding:2px 6px;border-radius:5px;}
+.gallery-info{font-size:12px;padding:3px 6px;text-align:left;color:#fff;}
 
-/* Checkbox container */
-.checkbox-container{
-    position:absolute;
-    top:8px;
-    left:8px;
-    background: rgba(0,0,0,0.5);
-    padding:2px 6px;
-    border-radius:5px;
-}
-
-/* Info about uploader and category */
-.gallery-info{
-    font-size:12px;
-    padding: 3px 6px;
-    text-align:left;
-    color:#fff;
-}
+/* Hero carousel */
+.carousel{position:relative;width:100%;max-height:300px;margin-bottom:20px;overflow:hidden;border-radius:10px;}
+.carousel img{width:100%;height:300px;object-fit:cover;}
+.carousel-caption{position:absolute;bottom:10px;left:10px;color:#fff;font-size:20px;background:rgba(0,0,0,0.5);padding:5px 10px;border-radius:5px;}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:white;border:none;font-size:24px;padding:10px;border-radius:50%;cursor:pointer;}
+.carousel-btn.left{left:10px;} .carousel-btn.right{right:10px;}
 
 /* Sidebar */
-.sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 220px;
-    background: rgba(0,0,0,0.9);
-    color: #fff;
-    overflow-x: hidden;
-    transition: width 0.3s;
-    padding-top: 60px;
-    z-index: 1000;
-}
-.sidebar.collapsed { width: 0; padding:0; }
-.sidebar a {
-    display:block;
-    padding:10px 20px;
-    text-decoration:none;
-    color:white;
-}
-.sidebar a:hover { background:#111; }
+.sidebar{position:fixed;left:0;top:0;height:100%;width:220px;background:rgba(0,0,0,0.9);color:#fff;overflow-x:hidden;transition:width 0.3s;padding-top:60px;z-index:1000;}
+.sidebar.collapsed{width:0;padding:0;}
+.sidebar a{display:block;padding:10px 20px;text-decoration:none;color:white;}
+.sidebar a:hover{background:#111;}
+#sidebarToggle{position:fixed;left:230px;top:15px;background:#ff4da6;border-radius:50%;width:40px;height:40px;border:none;cursor:pointer;color:#fff;font-size:24px;z-index:1100;}
+#sidebarToggle:hover{background:#e60084;}
 
-/* Sidebar toggle button */
-#sidebarToggle{
-    position: fixed;
-    left: 230px;
-    top: 15px;
-    background: #ff4da6;
-    border-radius:50%;
-    width:40px;
-    height:40px;
-    border:none;
-    cursor:pointer;
-    color:#fff;
-    font-size:24px;
-    z-index:1100;
-}
-#sidebarToggle:hover{ background:#e60084; }
+/* Search bar */
+#searchBar{width:100%;max-width:300px;padding:5px;margin:10px auto;border-radius:5px;border:none;display:block;font-size:16px;}
 
-/* Responsive adjustments */
-@media(max-width:768px){
-    .sidebar { width:0; padding:0; }
-    #sidebarToggle{ left:10px; top:10px; }
-    .container{ padding:10px; }
-    .controls{ flex-direction:column; gap:5px; }
-}
+/* Lightbox */
+#lightboxOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:none;justify-content:center;align-items:center;z-index:2000;}
+#lightboxOverlay img{max-width:90%;max-height:90%;border-radius:10px;}
+#lightboxOverlay span{position:absolute;top:20px;right:30px;font-size:30px;color:white;cursor:pointer;}
 </style>
 </head>
 <body>
 
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
-    <a href="#" data-category="all">All Photos</a>
-    <a href="#" data-category="family">Family</a>
+    <a href="#" data-category="all">Alle Fotos</a>
+    <a href="#" data-category="family">Familie</a>
     <a href="#" data-category="bride">Bride</a>
     <a href="#" data-category="groom">Groom</a>
     <a href="#" data-category="friends">Friends</a>
+    <a href="#" data-category="my">My Fotos</a>
 </div>
 <button id="sidebarToggle">☰</button>
+
+<!-- Hero Carousel -->
+<div class="carousel" id="heroCarousel">
+    <button class="carousel-btn left" id="prevSlide">&#10094;</button>
+    <button class="carousel-btn right" id="nextSlide">&#10095;</button>
+    <div class="carousel-caption">Zweers Troue 2026 ❤️</div>
+</div>
 
 <div class="container">
     <h1>📸 Zweers Troue Gallery</h1>
     <p>Upload jou photos vanaf jou foon of rekenaar! ❤️</p>
+
+    <input id="searchBar" placeholder="🔍 Soek naam...">
 
     <!-- Drop area -->
     <div id="drop-area">
@@ -206,7 +107,7 @@ button {
         <p>Of sleep jou foto hierheen</p>
     </div>
 
-    <!-- Buttons -->
+    <!-- Controls -->
     <div class="controls">
         <button class="select-all-btn" id="selectAllBtn">Select All</button>
         <button class="deselect-all-btn" id="deselectAllBtn">Deselect All</button>
@@ -214,8 +115,13 @@ button {
     </div>
 
     <div class="confetti-message" id="confettiMessage"></div>
-
     <div class="gallery" id="gallery"></div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightboxOverlay">
+    <span id="closeLightbox">&times;</span>
+    <img id="lightboxImg">
 </div>
 
 <script type="module">
@@ -239,152 +145,142 @@ const input = document.getElementById("fileInput");
 const dropArea = document.getElementById("drop-area");
 const uploaderNameInput = document.getElementById("uploaderName");
 const categorySelect = document.getElementById("categorySelect");
+const gallery = document.getElementById("gallery");
+const heroCarousel = document.getElementById("heroCarousel");
+const searchBar = document.getElementById("searchBar");
+
+// Sidebar toggle
+const sidebar = document.getElementById("sidebar");
+const toggleBtn = document.getElementById("sidebarToggle");
+toggleBtn.addEventListener("click", ()=> sidebar.classList.toggle("collapsed"));
+
+// Lightbox
+const lightboxOverlay = document.getElementById("lightboxOverlay");
+const lightboxImg = document.getElementById("lightboxImg");
+document.getElementById("closeLightbox").addEventListener("click", ()=>lightboxOverlay.style.display="none");
 
 // Upload function
 async function handleFiles(file){
     const uploader = uploaderNameInput.value || "Anonymous";
     const category = categorySelect.value || "all";
-    const storageRef = ref(storage,"photos/"+file.name);
-
-    // Metadata
-    const metadata = {
-        customMetadata: {
-            uploader: uploader,
-            category: category
-        }
-    }
-
+    const storageRef = ref(storage,`photos/${uploader}/${file.name}`);
+    const metadata = {customMetadata:{uploader, category}};
     await uploadBytes(storageRef,file,metadata);
     showConfetti();
     loadImages();
 }
 
 // File selection
-input.addEventListener("change",(e)=>{
-    const file = e.target.files[0];
-    if(file) handleFiles(file);
-});
+input.addEventListener("change",(e)=>{ const file = e.target.files[0]; if(file) handleFiles(file); });
 
 // Drag & drop
 dropArea.addEventListener("dragover",(e)=>{ e.preventDefault(); dropArea.classList.add("hover"); });
 dropArea.addEventListener("dragleave",(e)=>{ e.preventDefault(); dropArea.classList.remove("hover"); });
-dropArea.addEventListener("drop",(e)=>{
-    e.preventDefault();
-    dropArea.classList.remove("hover");
-    const file = e.dataTransfer.files[0];
-    if(file) handleFiles(file);
-});
+dropArea.addEventListener("drop",(e)=>{ e.preventDefault(); dropArea.classList.remove("hover"); const file=e.dataTransfer.files[0]; if(file) handleFiles(file); });
+
+// Confetti
+function showConfetti(){ const msg=document.getElementById("confettiMessage"); msg.innerText="🎉 Dankie! Jou foto is nou deel van die herinneringe!"; setTimeout(()=>{msg.innerText="";},3000); }
 
 // Load gallery
-async function loadImages(filterCategory="all"){
-    const gallery = document.getElementById("gallery");
+async function loadImages(filterCategory="all", searchName=""){
     gallery.innerHTML="";
     const listRef = ref(storage,"photos");
     const res = await listAll(listRef);
 
-    for(const item of res.items){
-        const url = await getDownloadURL(item);
-        const meta = item.customMetadata || {uploader:"Unknown", category:"all"};
-        let category = meta.category || "all";
-        let uploader = meta.uploader || "Unknown";
+    const allImages = [];
 
-        if(filterCategory!=="all" && filterCategory!==category) continue;
+    for(const folder of res.prefixes){ // per uploader folder
+        const uploader = folder.name;
+        if(searchName && !uploader.toLowerCase().includes(searchName.toLowerCase())) continue;
 
-        const div = document.createElement("div");
-        div.className="gallery-item";
+        const folderRes = await listAll(folder);
+        for(const item of folderRes.items){
+            const url = await getDownloadURL(item);
+            const meta = item.customMetadata || {uploader, category:"all"};
+            const category = meta.category || "all";
 
-        const img = document.createElement("img");
-        img.src=url;
+            if(filterCategory!=="all" && filterCategory!==category) continue;
 
-        const checkbox = document.createElement("input");
-        checkbox.type="checkbox";
-        checkbox.className="photo-checkbox";
+            const div=document.createElement("div");
+            div.className="gallery-item";
+            const img=document.createElement("img");
+            img.src=url;
+            img.addEventListener("click",()=>{lightboxImg.src=url; lightboxOverlay.style.display="flex";});
 
-        const checkboxContainer = document.createElement("div");
-        checkboxContainer.className="checkbox-container";
-        checkboxContainer.appendChild(checkbox);
+            const checkbox=document.createElement("input");
+            checkbox.type="checkbox"; checkbox.className="photo-checkbox";
+            const checkboxContainer=document.createElement("div");
+            checkboxContainer.className="checkbox-container"; checkboxContainer.appendChild(checkbox);
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.className="delete-btn";
-        deleteBtn.innerText="Delete";
-        deleteBtn.onclick = async ()=>{
-            const pass = prompt("Enter admin password to delete this photo:");
-            if(pass===adminPassword){
-                await deleteObject(ref(storage,"photos/"+item.name));
-                loadImages();
-            } else { alert("Wrong password!"); }
+            const deleteBtn=document.createElement("button");
+            deleteBtn.className="delete-btn"; deleteBtn.innerText="Delete";
+            deleteBtn.onclick=async ()=>{
+                const pass = prompt("Enter admin password to delete this photo:");
+                if(pass===adminPassword){ await deleteObject(item); loadImages(); } 
+                else { alert("Wrong password!"); }
+            }
+
+            const infoDiv=document.createElement("div"); infoDiv.className="gallery-info";
+            infoDiv.innerText=`👤 ${uploader} | 📂 ${category}`;
+
+            div.appendChild(img); div.appendChild(checkboxContainer);
+            div.appendChild(deleteBtn); div.appendChild(infoDiv);
+            gallery.appendChild(div);
+
+            allImages.push({url, uploader, category});
         }
-
-        const infoDiv = document.createElement("div");
-        infoDiv.className="gallery-info";
-        infoDiv.innerText=`${uploader} | ${category}`;
-
-        div.appendChild(img);
-        div.appendChild(checkboxContainer);
-        div.appendChild(deleteBtn);
-        div.appendChild(infoDiv);
-        gallery.appendChild(div);
     }
+
+    // Update carousel
+    updateCarousel(allImages.slice(-5));
 }
 
-// Button actions
-document.getElementById("selectAllBtn").addEventListener("click", ()=>{
-    document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=true);
-});
-document.getElementById("deselectAllBtn").addEventListener("click", ()=>{
-    document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=false);
-});
+// Carousel
+let currentSlide=0;
+function updateCarousel(images){
+    heroCarousel.innerHTML=`<button class="carousel-btn left" id="prevSlide">&#10094;</button>
+    <button class="carousel-btn right" id="nextSlide">&#10095;</button>
+    <div class="carousel-caption">Zweers Troue 2026 ❤️</div>`;
+    if(images.length===0) return;
+    const img=document.createElement("img"); img.src=images[currentSlide].url;
+    heroCarousel.appendChild(img);
+    document.getElementById("prevSlide").addEventListener("click",()=>{currentSlide=(currentSlide-1+images.length)%images.length; updateCarousel(images);});
+    document.getElementById("nextSlide").addEventListener("click",()=>{currentSlide=(currentSlide+1)%images.length; updateCarousel(images);});
+}
+setInterval(()=>{currentSlide++; loadImages();},5000);
+
+// Buttons
+document.getElementById("selectAllBtn").addEventListener("click",()=>{document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=true);});
+document.getElementById("deselectAllBtn").addEventListener("click",()=>{document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=false);});
 document.getElementById("downloadSelectedBtn").addEventListener("click", async ()=>{
-    const checkboxes = document.querySelectorAll(".gallery-item input.photo-checkbox");
-    const selected = Array.from(checkboxes).filter(cb=>cb.checked);
-    if(selected.length === 0){ alert("Geen foto geselekteer nie!"); return; }
-
+    const checkboxes=document.querySelectorAll(".gallery-item input.photo-checkbox");
+    const selected=Array.from(checkboxes).filter(cb=>cb.checked);
+    if(selected.length===0){alert("Geen foto geselekteer nie!"); return;}
     for(const cb of selected){
-        const img = cb.closest(".gallery-item").querySelector("img");
-        try{
-            const response = await fetch(img.src, { mode: 'cors' });
-            const blob = await response.blob();
-            const blobUrl = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = blobUrl;
-            a.download = img.src.split("/").pop();
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            URL.revokeObjectURL(blobUrl);
-        } catch(err){
-            console.error("Download failed:", err);
-            alert("Kon nie foto aflaai nie. Probeer asseblief weer.");
-        }
+        const img=cb.closest(".gallery-item").querySelector("img");
+        const response=await fetch(img.src,{mode:'cors'});
+        const blob=await response.blob();
+        const blobUrl=URL.createObjectURL(blob);
+        const a=document.createElement("a"); a.href=blobUrl;
+        a.download=img.src.split("/").pop();
+        document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(blobUrl);
     }
 });
 
-// Confetti message
-function showConfetti(){
-    const msg = document.getElementById("confettiMessage");
-    msg.innerText="🎉 Dankie! Jou foto is nou deel van die herinneringe!";
-    setTimeout(()=>{msg.innerText="";},3000);
-}
-
-// Sidebar toggle
-const sidebar = document.getElementById("sidebar");
-const toggleBtn = document.getElementById("sidebarToggle");
-toggleBtn.addEventListener("click", ()=>{
-    sidebar.classList.toggle("collapsed");
-});
-
-// Filter by category via sidebar
+// Sidebar filter
 document.querySelectorAll(".sidebar a").forEach(link=>{
     link.addEventListener("click", (e)=>{
         e.preventDefault();
         const cat = link.dataset.category;
-        loadImages(cat);
+        loadImages(cat, searchBar.value);
     });
 });
+
+// Search
+searchBar.addEventListener("input",(e)=>loadImages("all", e.target.value));
 
 // Initial load
 loadImages();
 </script>
-
 </body>
 </html>
