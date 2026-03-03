@@ -4,202 +4,219 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zweers Troue Gallery</title>
-
 <style>
-
-/* BACKGROUND */
-body::before{
-content:"";
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:url('Wedding.jpg') no-repeat center center;
-background-size:cover;
-opacity:0.30;
-z-index:-1;
+/* BACKGROUND & BODY */
+body::before {
+    content: "";
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: url('Wedding.jpg') no-repeat center center;
+    background-size: cover;
+    opacity: 0.30;
+    z-index: -1;
 }
-
-body{
-margin:0;
-font-family:'Segoe UI',sans-serif;
-background:#000;
-color:#fff;
-overflow-x:hidden;
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #000;
+    color: #fff;
+    text-align: center;
+    overflow-x: hidden;
 }
 
 /* SIDEBAR */
-.sidebar{
-position:fixed;
-left:0;
-top:0;
-height:100%;
-width:250px;
-background:rgba(0,0,0,0.85);
-padding:20px;
-transition:0.4s;
-z-index:1000;
+.sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 250px;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    padding: 20px;
+    transition: 0.4s;
+    z-index: 1000;
 }
-
-.sidebar.collapsed{
-width:70px;
+.sidebar.collapsed {
+    width: 70px;
 }
-
-.sidebar h3{
-color:#ff66cc;
+.sidebar h3 {
+    color: #ff66cc;
 }
-
-.sidebar button{
-display:block;
-width:100%;
-margin:10px 0;
-padding:10px;
-border:none;
-border-radius:20px;
-background:#ff4da6;
-color:#fff;
-cursor:pointer;
+.sidebar button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    background: #ff4da6;
+    color: #fff;
+    cursor: pointer;
 }
-
-.toggle-btn{
-position:absolute;
-top:20px;
-right:-15px;
-background:#ff4da6;
-border-radius:50%;
-width:30px;
-height:30px;
-cursor:pointer;
+.toggle-btn {
+    position: absolute;
+    top: 20px;
+    right: -15px;
+    background: #ff4da6;
+    border-radius: 50%;
+    width: 30px; height: 30px;
+    cursor: pointer;
 }
 
 /* MAIN CONTENT */
-.main{
-margin-left:260px;
-padding:40px 20px;
-transition:0.4s;
+.container, .main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    transition: 0.4s;
+}
+.main {
+    margin-left: 260px;
+}
+.sidebar.collapsed + .main {
+    margin-left: 80px;
 }
 
-.sidebar.collapsed + .main{
-margin-left:80px;
-}
+/* HEADINGS & TEXT */
+h1 { font-size: 32px; color: #fff; }
+p { font-size: 18px; color: #ccc; }
 
 /* BUTTONS */
-button{
-border:none;
-border-radius:30px;
-font-size:15px;
-cursor:pointer;
-margin:5px;
-transition:0.3s;
+button {
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    cursor: pointer;
+    margin: 5px;
+    transition: 0.3s;
 }
+.upload-btn{ background:#ff4da6; color:white; padding:15px 30px;}
+.upload-btn:hover{ background: #e60084;}
+.download-btn{ background:#4da6ff; color:white; padding:15px 25px;}
+.download-btn:hover{ background:#0080ff;}
+.select-all-btn{ background:#00ff99; color:black; padding:15px 25px;}
+.select-all-btn:hover{ background:#00cc7a;}
+.deselect-all-btn{ background:#ffcc00; color:black; padding:15px 25px;}
+.deselect-all-btn:hover{ background:#e6b800;}
+.delete-btn{ background:#ff3333; color:white; font-size:14px; padding:5px 10px;}
 
-.upload-btn{background:#ff4da6;color:white;padding:14px 28px;}
-.download-btn{background:#4da6ff;color:white;padding:14px 24px;}
-.select-all-btn{background:#00ff99;color:black;padding:14px 24px;}
-.deselect-all-btn{background:#ffcc00;color:black;padding:14px 24px;}
-
-button:hover{transform:scale(1.05);}
-
-/* DROP */
-#drop-area{
-border:2px dashed #fff;
-padding:30px;
-border-radius:20px;
-margin:20px 0;
-background:rgba(255,255,255,0.05);
+/* DROP AREA */
+#drop-area {
+    border: 2px dashed #fff;
+    padding: 20px;
+    border-radius: 20px;
+    margin: 20px 0;
+    transition: 0.3s;
 }
+#drop-area.hover { background: rgba(255,255,255,0.1); }
 
 /* GALLERY */
-.gallery{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-gap:15px;
-margin-top:30px;
+.gallery {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+    gap: 15px;
+    padding: 20px;
 }
-
-.gallery-item{
-position:relative;
+.gallery-item {
+    position: relative;
+    display: inline-block;
+    transition: 0.3s;
 }
-
-.gallery-item img{
-width:100%;
-border-radius:15px;
-cursor:pointer;
-box-shadow:0 8px 20px rgba(0,0,0,0.5);
-transition:0.3s;
+.gallery-item img {
+    width: 100%;
+    border-radius: 15px;
+    cursor: pointer;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
 }
-
-.gallery-item img:hover{
-transform:scale(1.05);
+@keyframes fadeIn { to { opacity:1; } }
+.checkbox-container {
+    position: absolute;
+    top:8px; left:8px;
+    background: rgba(0,0,0,0.5);
+    padding:2px 6px;
+    border-radius:5px;
 }
-
 .like-btn{
-position:absolute;
-bottom:8px;
-left:8px;
-background:#ff66cc;
-padding:5px 10px;
-border-radius:20px;
-font-size:12px;
+    position:absolute;
+    bottom:8px;
+    left:8px;
+    background:#ff66cc;
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:12px;
 }
 
-/* FULLSCREEN */
-.fullscreen{
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:rgba(0,0,0,0.9);
-display:none;
-justify-content:center;
-align-items:center;
-z-index:2000;
+/* CONFETTI MESSAGE */
+.confetti-message {
+    margin-top: 10px;
+    color:#ff4da6;
+    font-weight:bold;
 }
 
-.fullscreen img{
-max-width:90%;
-max-height:90%;
-border-radius:20px;
+/* CONTROLS */
+.controls {
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom: 20px;
+}
+
+/* FULLSCREEN VIEWER */
+.fullscreen {
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+.fullscreen img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 20px;
 }
 
 /* MESSAGE BOARD */
 .message-board{
-margin-top:60px;
-padding:30px;
-border-radius:25px;
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(10px);
+    margin-top:60px;
+    padding:30px;
+    border-radius:25px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
 }
-
 .message-board input,
 .message-board textarea{
-width:100%;
-max-width:600px;
-margin:10px auto;
-padding:10px;
-border-radius:15px;
-border:none;
-display:block;
+    width:100%;
+    max-width:600px;
+    margin:10px auto;
+    padding:10px;
+    border-radius:15px;
+    border:none;
+    display:block;
 }
-
 .single-message{
-background:rgba(0,0,0,0.5);
-padding:15px;
-border-radius:15px;
-margin:10px auto;
-max-width:600px;
+    background:rgba(0,0,0,0.5);
+    padding:15px;
+    border-radius:15px;
+    margin:10px auto;
+    max-width:600px;
 }
 
 /* CAROUSEL */
 .carousel{
-margin-top:50px;
-text-align:center;
+    margin-top:50px;
+    text-align:center;
 }
-
 .carousel img{
-width:80%;
-max-width:500px;
-border-radius:20px;
+    width:80%;
+    max-width:500px;
+    border-radius:20px;
 }
-
 </style>
 </head>
 
@@ -207,28 +224,29 @@ border-radius:20px;
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
-<div class="toggle-btn" onclick="toggleSidebar()">☰</div>
-<h3>Zweers Troue</h3>
-<button onclick="startCarousel()">Start Slideshow</button>
-<button onclick="stopCarousel()">Stop Slideshow</button>
+    <div class="toggle-btn" onclick="toggleSidebar()">☰</div>
+    <h3>Zweers Troue</h3>
+    <button onclick="startCarousel()">Start Slideshow</button>
+    <button onclick="stopCarousel()">Stop Slideshow</button>
 </div>
 
-<div class="main">
-
+<div class="main container">
 <h1>📸 Zweers Troue Gallery</h1>
+<p>Upload jou photos vanaf jou foon of rekenaar! ❤️</p>
 
 <div id="drop-area">
 <input type="file" id="fileInput" hidden>
-<button class="upload-btn" onclick="fileInput.click()">Upload Photo</button>
+<button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
 <p>Of sleep jou foto hierheen</p>
 </div>
 
-<div>
+<div class="controls">
 <button class="select-all-btn" id="selectAllBtn">Select All</button>
 <button class="deselect-all-btn" id="deselectAllBtn">Deselect All</button>
 <button class="download-btn" id="downloadSelectedBtn">Download Selected</button>
 </div>
 
+<div class="confetti-message" id="confettiMessage"></div>
 <div class="gallery" id="gallery"></div>
 
 <div class="carousel">
@@ -243,7 +261,6 @@ border-radius:20px;
 <button onclick="addMessage()">Stuur</button>
 <div id="messages"></div>
 </div>
-
 </div>
 
 <div class="fullscreen" id="fullscreen" onclick="closeFullscreen()">
@@ -251,103 +268,180 @@ border-radius:20px;
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getStorage, ref, uploadBytes, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
 import { getDatabase, ref as dbRef, push, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
 const firebaseConfig = {
-apiKey:"AIzaSyB...",
-authDomain:"zweers-troue.firebaseapp.com",
-databaseURL:"https://zweers-troue-default-rtdb.firebaseio.com/",
-projectId:"zweers-troue",
-storageBucket:"zweers-troue.firebasestorage.app"
+apiKey: "AIzaSyB_AVP6tZD8U4AHNLrVf9nCe-gpOHPDLM8",
+authDomain: "zweers-troue.firebaseapp.com",
+projectId: "zweers-troue",
+storageBucket: "zweers-troue.firebasestorage.app",
+messagingSenderId: "584236352490",
+appId: "1:584236352490:web:c717038090bd005e712893",
+measurementId: "G-JBWM0TNSM4",
+databaseURL: "https://zweers-troue-default-rtdb.firebaseio.com/"
 };
 
-const app=initializeApp(firebaseConfig);
-const storage=getStorage(app);
-const database=getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const storage = getStorage(app);
+const database = getDatabase(app);
+const adminPassword = "troueAdmin123";
 
-const gallery=document.getElementById("gallery");
-let imageList=[];
-let carouselInterval;
-
-/* LOAD IMAGES */
-async function loadImages(){
-gallery.innerHTML="";
-const res=await listAll(ref(storage,"photos"));
-imageList=[];
-for(const item of res.items){
-const url=await getDownloadURL(item);
-imageList.push(url);
-
-const div=document.createElement("div");
-div.className="gallery-item";
-
-const img=document.createElement("img");
-img.src=url;
-img.onclick=()=>openFullscreen(url);
-
-const like=document.createElement("button");
-like.className="like-btn";
-like.innerText="❤️ Like";
-
-div.appendChild(img);
-div.appendChild(like);
-gallery.appendChild(div);
+/* UPLOAD */
+const input = document.getElementById("fileInput");
+const dropArea = document.getElementById("drop-area");
+function handleFiles(file){
+    const storageRef = ref(storage,"photos/"+file.name);
+    uploadBytes(storageRef,file).then(()=>{
+        showConfetti();
+        loadImages();
+    });
 }
-document.getElementById("carouselImage").src=imageList[0];
+input.addEventListener("change",(e)=>{
+    const file = e.target.files[0];
+    if(file) handleFiles(file);
+});
+dropArea.addEventListener("dragover",(e)=>{ e.preventDefault(); dropArea.classList.add("hover"); });
+dropArea.addEventListener("dragleave",(e)=>{ e.preventDefault(); dropArea.classList.remove("hover"); });
+dropArea.addEventListener("drop",(e)=>{
+    e.preventDefault(); dropArea.classList.remove("hover");
+    const file = e.dataTransfer.files[0];
+    if(file) handleFiles(file);
+});
+
+/* LOAD IMAGES & ORIGINAL FEATURES */
+async function loadImages(){
+    const gallery = document.getElementById("gallery");
+    gallery.innerHTML="";
+    const listRef = ref(storage,"photos");
+    const res = await listAll(listRef);
+    window.imageList=[];
+    for(const item of res.items){
+        const url = await getDownloadURL(item);
+        window.imageList.push(url);
+
+        const div = document.createElement("div");
+        div.className="gallery-item";
+
+        const img = document.createElement("img");
+        img.src=url;
+        img.onclick=()=>openFullscreen(url);
+
+        const checkbox = document.createElement("input");
+        checkbox.type="checkbox";
+        checkbox.className="photo-checkbox";
+
+        const checkboxContainer = document.createElement("div");
+        checkboxContainer.className="checkbox-container";
+        checkboxContainer.appendChild(checkbox);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className="delete-btn";
+        deleteBtn.innerText="Delete";
+        deleteBtn.onclick = async ()=>{
+            const pass = prompt("Enter admin password to delete this photo:");
+            if(pass===adminPassword){
+                await deleteObject(ref(storage,"photos/"+item.name));
+                loadImages();
+            } else { alert("Wrong password!"); }
+        }
+
+        const likeBtn = document.createElement("button");
+        likeBtn.className="like-btn";
+        likeBtn.innerText="❤️ Like";
+
+        div.appendChild(img);
+        div.appendChild(checkboxContainer);
+        div.appendChild(deleteBtn);
+        div.appendChild(likeBtn);
+
+        gallery.appendChild(div);
+    }
+    document.getElementById("carouselImage").src = window.imageList[0];
 }
 loadImages();
 
-/* FULLSCREEN */
-function openFullscreen(src){
-document.getElementById("fullscreenImg").src=src;
-document.getElementById("fullscreen").style.display="flex";
-}
-function closeFullscreen(){
-document.getElementById("fullscreen").style.display="none";
+/* BUTTON ACTIONS */
+document.getElementById("selectAllBtn").addEventListener("click", ()=>{
+    document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=true);
+});
+document.getElementById("deselectAllBtn").addEventListener("click", ()=>{
+    document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=false);
+});
+document.getElementById("downloadSelectedBtn").addEventListener("click", async ()=>{
+    const checkboxes = document.querySelectorAll(".gallery-item input.photo-checkbox");
+    const selected = Array.from(checkboxes).filter(cb=>cb.checked);
+    if(selected.length === 0){ alert("Geen foto geselekteer nie!"); return; }
+    for(const cb of selected){
+        const img = cb.closest(".gallery-item").querySelector("img");
+        try{
+            const response = await fetch(img.src,{mode:'cors'});
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = blobUrl;
+            a.download = img.src.split("/").pop();
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(blobUrl);
+        }catch(err){ console.error("Download failed:",err); alert("Kon nie foto aflaai nie. Probeer asseblief weer."); }
+    }
+});
+
+/* CONFETTI */
+function showConfetti(){
+    const msg = document.getElementById("confettiMessage");
+    msg.innerText="🎉 Dankie! Jou foto is nou deel van die herinneringe!";
+    setTimeout(()=>{ msg.innerText=""; },3000);
 }
 
-/* SIDEBAR */
-window.toggleSidebar=function(){
-document.getElementById("sidebar").classList.toggle("collapsed");
+/* FULLSCREEN */
+function openFullscreen(src){
+    document.getElementById("fullscreenImg").src = src;
+    document.getElementById("fullscreen").style.display = "flex";
+}
+function closeFullscreen(){
+    document.getElementById("fullscreen").style.display = "none";
+}
+
+/* SIDEBAR COLLAPSE */
+function toggleSidebar(){
+    document.getElementById("sidebar").classList.toggle("collapsed");
 }
 
 /* CAROUSEL */
-window.startCarousel=function(){
-let i=0;
-carouselInterval=setInterval(()=>{
-i=(i+1)%imageList.length;
-document.getElementById("carouselImage").src=imageList[i];
-},3000);
+let carouselInterval;
+function startCarousel(){
+    let i=0;
+    carouselInterval=setInterval(()=>{
+        i=(i+1)%window.imageList.length;
+        document.getElementById("carouselImage").src = window.imageList[i];
+    },3000);
 }
-window.stopCarousel=function(){
-clearInterval(carouselInterval);
-}
+function stopCarousel(){ clearInterval(carouselInterval); }
 
 /* MESSAGE BOARD FIREBASE */
-window.addMessage=function(){
-const name=document.getElementById("nameInput").value;
-const message=document.getElementById("messageInput").value;
-if(!name||!message)return alert("Vul alles in!");
-push(dbRef(database,"messages"),{name,message});
-document.getElementById("nameInput").value="";
-document.getElementById("messageInput").value="";
+function addMessage(){
+    const name=document.getElementById("nameInput").value;
+    const message=document.getElementById("messageInput").value;
+    if(!name||!message) return alert("Vul alles in!");
+    push(dbRef(database,"messages"),{name,message});
+    document.getElementById("nameInput").value="";
+    document.getElementById("messageInput").value="";
 }
-
 onValue(dbRef(database,"messages"),snapshot=>{
-const data=snapshot.val();
-const container=document.getElementById("messages");
-container.innerHTML="";
-for(let id in data){
-const div=document.createElement("div");
-div.className="single-message";
-div.innerHTML=`<strong>${data[id].name}</strong><p>${data[id].message}</p>`;
-container.prepend(div);
-}
+    const data=snapshot.val();
+    const container=document.getElementById("messages");
+    container.innerHTML="";
+    for(let id in data){
+        const div=document.createElement("div");
+        div.className="single-message";
+        div.innerHTML=`<strong>${data[id].name}</strong><p>${data[id].message}</p>`;
+        container.prepend(div);
+    }
 });
-
 </script>
 
 </body>
