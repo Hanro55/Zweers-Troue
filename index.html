@@ -95,8 +95,6 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
 
 <!-- Hero Carousel -->
 <div class="carousel" id="heroCarousel">
-    <button class="carousel-btn left" id="prevSlide">&#10094;</button>
-    <button class="carousel-btn right" id="nextSlide">&#10095;</button>
     <div class="carousel-caption">Zweers Troue 2026 ❤️</div>
 </div>
 
@@ -366,7 +364,25 @@ function updateCarousel(){
 }
 
 setInterval(updateCarousel,5000);
+let startX = 0;
 
+heroCarousel.addEventListener("touchstart", e=>{
+    startX = e.touches[0].clientX;
+});
+
+heroCarousel.addEventListener("touchend", e=>{
+    let endX = e.changedTouches[0].clientX;
+
+    if(startX - endX > 50){
+        currentSlide = (currentSlide+1)%carouselImages.length;
+        updateCarousel();
+    }
+
+    if(endX - startX > 50){
+        currentSlide = (currentSlide-1+carouselImages.length)%carouselImages.length;
+        updateCarousel();
+    }
+});
 document.getElementById("selectAllBtn").addEventListener("click",()=>{document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=true);});
 document.getElementById("deselectAllBtn").addEventListener("click",()=>{document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=false);});
 document.getElementById("downloadSelectedBtn").addEventListener("click", async ()=>{
