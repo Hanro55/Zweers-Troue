@@ -76,7 +76,7 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
 <body>
 
 <!-- Sidebar -->
-<div class="sidebar" id="sidebar">
+<div class="sidebar collapsed" id="sidebar">
     <a href="#" data-category="all">Alle Fotos</a>
     <a href="#" data-category="family">Familie</a>
     <a href="#" data-category="bride">Bride</a>
@@ -118,11 +118,11 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
     </div>
 
     <!-- Controls -->
-    <div class="controls">
-        <button class="select-all-btn" id="selectAllBtn">Select All</button>
-        <button class="deselect-all-btn" id="deselectAllBtn">Deselect All</button>
-        <button class="download-btn" id="downloadSelectedBtn">Download Selected</button>
-    </div>
+    <div class="controls" id="adminControls" style="display:none;">
+    <button class="select-all-btn" id="selectAllBtn">Select All</button>
+    <button class="deselect-all-btn" id="deselectAllBtn">Deselect All</button>
+    <button class="download-btn" id="downloadSelectedBtn">Download Selected</button>
+</div>
 
     <div class="confetti-message" id="confettiMessage"></div>
     <div class="stats" id="stats"></div>
@@ -176,10 +176,13 @@ document.getElementById("adminBtn").addEventListener("click", ()=>{
     }
     const pass = prompt("Voer admin password in:");
     if(pass === adminPassword){
-        isAdmin = true;
-        alert("Admin toegang gegee! Delete knoppies is nou sigbaar.");
-        loadImages(currentFilter, searchBar.value);
-    } else {
+    isAdmin = true;
+
+    document.getElementById("adminControls").style.display = "flex";
+
+    alert("Admin toegang gegee! Delete knoppies is nou sigbaar.");
+    loadImages(currentFilter, searchBar.value);
+} else {
         alert("Verkeerde password!");
     }
 });
@@ -222,6 +225,7 @@ async function loadImages(filterCategory="all", searchName=""){
     const res = await listAll(listRef);
     const allImages = [];
     const uploaderCount={};
+    const userSections = {};
 
     for(const folder of res.prefixes){
         const uploader = folder.name;
@@ -274,9 +278,9 @@ async function loadImages(filterCategory="all", searchName=""){
             likeBtn.style.color="#ff4da6";
             likeBtn.style.cursor="pointer";
 
-            const likeKey = `liked_${uploader}_${item.name}`;
+            const likeKey = `liked_${item.fullPath}`;
 
-            if(sessionStorage.getItem(likeKey)){
+            if(localStorage.getItem(likeKey)){
                 likeBtn.innerText=`❤️ ${likes} (Liked)`;
                 likeBtn.disabled = true;
             } else {
@@ -284,10 +288,10 @@ async function loadImages(filterCategory="all", searchName=""){
             }
 
             likeBtn.onclick=async ()=>{
-                if(sessionStorage.getItem(likeKey)) return;
+                if(localStorage.getItem(likeKey)) return;
                 likes++;
                 await updateMetadata(item,{customMetadata:{...meta, likes:likes.toString()}});
-                sessionStorage.setItem(likeKey,"true");
+                localStorage.setItem(likeKey,"true");
                 loadImages(currentFilter, searchBar.value);
             };
 
@@ -303,7 +307,23 @@ async function loadImages(filterCategory="all", searchName=""){
             div.appendChild(deleteBtn);
             div.appendChild(likeBtn);
             div.appendChild(infoDiv);
-            gallery.appendChild(div);
+            if(!userSections[uploader]){
+    const heading = document.createElement("h2");
+    heading.style.marginTop = "30px";
+    heading.style.color = "#ff4da6";
+    heading.innerText = `👤 ${uploader}`;
+    gallery.appendChild(heading);
+
+    const sectionDiv = document.createElement("div");
+    sectionDiv.style.display="grid";
+    sectionDiv.style.gridTemplateColumns="repeat(auto-fit,minmax(120px,1fr))";
+    sectionDiv.style.gap="10px";
+
+    gallery.appendChild(sectionDiv);
+    userSections[uploader] = sectionDiv;
+}
+
+userSections[uploader].appendChild(div);
 
             allImages.push({url:imageUrl, uploader, category, message, likes, featured});
 
