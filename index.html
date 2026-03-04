@@ -60,10 +60,7 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
 
 /* Search bar */
 #searchBar{width:100%;max-width:300px;padding:5px;margin:10px auto;border-radius:15px;border:none;display:block;font-size:16px;}
-<div style="display:flex;justify-content:center;gap:5px;">
-    <input id="searchBar" placeholder="🔍 Soek naam...">
-    <button id="searchBtn">Soek</button>
-</div>
+
 /* Stats */
 .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;margin:15px auto;font-size:14px;color:#fff;}
 .stat-card{background:rgba(255,255,255,0.1); padding:10px 15px; border-radius:12px; text-align:center; min-width:120px;}
@@ -119,7 +116,11 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
         <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
         <p>Of sleep jou foto hierheen</p>
     </div>
+<div style="display:flex;justify-content:center;gap:5px;">
+    <input id="searchBar" placeholder="🔍 Soek naam...">
+    <button id="searchBtn">Soek</button>
 
+</div>
     <!-- Controls -->
     <div class="controls" id="adminControls" style="display:none;">
     <button class="select-all-btn" id="selectAllBtn">Select All</button>
