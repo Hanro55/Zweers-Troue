@@ -132,6 +132,20 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
     <div class="stats" id="stats"></div>
     <div class="gallery" id="gallery"></div>
 </div>
+<section style="margin-top:50px;">
+    <h2 style="text-align:center;color:#ff4da6;">💌 Los 'n boodskap vir die bruidspaar</h2>
+
+    <div style="text-align:center;">
+        <input type="text" id="msgName" placeholder="Jou Naam">
+        <br><br>
+        <textarea id="msgText" placeholder="Jou boodskap..." style="width:100%;max-width:400px;height:80px;border-radius:15px;padding:10px;"></textarea>
+        <br><br>
+        <button class="upload-btn" id="sendMsgBtn">Stuur Boodskap</button>
+    </div>
+
+    <div id="messagesList" style="margin-top:30px;"></div>
+</section>
+    
 
 <!-- Lightbox -->
 <div id="lightboxOverlay">
@@ -140,7 +154,7 @@ button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;t
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject, getMetadata, updateMetadata } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
 
 const firebaseConfig = {
@@ -155,6 +169,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
+    const db = getFirestore(app);
 
 const adminPassword = "troueAdmin123";
 let isAdmin = false;
@@ -419,6 +434,54 @@ document.getElementById("searchBtn")
 });
 
 loadImages();
+
+    document.getElementById("sendMsgBtn")
+.addEventListener("click", async ()=>{
+    const name = document.getElementById("msgName").value;
+    const text = document.getElementById("msgText").value;
+
+    if(!name || !text){
+        alert("Vul alles in.");
+        return;
+    }
+
+    await addDoc(collection(db,"messages"),{
+        name,
+        text,
+        created: Date.now()
+    });
+
+    document.getElementById("msgName").value="";
+    document.getElementById("msgText").value="";
+
+    loadMessages();
+});
+
+async function loadMessages(){
+    const snapshot = await getDocs(collection(db,"messages"));
+    const container = document.getElementById("messagesList");
+    container.innerHTML="";
+
+    snapshot.forEach(doc=>{
+        const data = doc.data();
+
+        const div=document.createElement("div");
+        div.style.background="rgba(255,255,255,0.1)";
+        div.style.padding="10px";
+        div.style.margin="10px auto";
+        div.style.borderRadius="15px";
+        div.style.maxWidth="500px";
+
+        div.innerHTML=`
+            <strong>${data.name}</strong>
+            <p>${data.text}</p>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+loadMessages();
 </script>
 </body>
 </html>
