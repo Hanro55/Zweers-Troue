@@ -1,487 +1,55 @@
 
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zweers Troue Gallery Premium</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<style>
-body::before{
-    content:"";
-    position:fixed; top:0; left:0; width:100%; height:100%;
-    background:url('Wedding.jpg') no-repeat center center;
-    background-size:cover; opacity:0.3; z-index:-1;
-}
-body{margin:0; font-family:'Poppins', sans-serif; background:#000; color:#fff;}
-.container{max-width:1000px;margin:0 auto;padding:20px;}
-h1{text-align:center;font-size:32px;color:#fff;}
-p{text-align:center;font-size:18px;color:#ccc;}
-button{border:none;border-radius:30px;font-size:16px;cursor:pointer;margin:5px;transition:0.3s;}
-.upload-btn{background:#ff4da6;color:white;padding:12px 25px;}
-.upload-btn:hover{background:#e60084;}
-.download-btn{background:#4da6ff;color:white;padding:12px 20px;}
-.select-all-btn{background:#00ff99;color:black;padding:12px 20px;}
-.select-all-btn:hover{background:#00cc7a;}
-.deselect-all-btn{background:#ffcc00;color:black;padding:12px 20px;}
-.deselect-all-btn:hover{background:#e6b800;}
-.delete-btn{background:#ff3333;color:white;font-size:14px;padding:5px 10px;}
-
-/* Drop area */
-#drop-area{border:2px dashed #fff;padding:20px;border-radius:20px;margin:20px 0;text-align:center;transition:0.3s;}
-#drop-area.hover{background:rgba(255,255,255,0.1);}
-.controls{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
-.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;padding:10px;margin-top:20px;}
-.gallery-item{position:relative;display:inline-block;transition:0.3s;background:rgba(255,255,255,0.05);border-radius:10px;overflow:hidden;}
-.gallery-item img{width:100%;border-radius:10px;cursor:pointer;opacity:0;animation:fadeIn 0.5s forwards;}
-@keyframes fadeIn{to{opacity:1;}}
-.checkbox-container{position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.5);padding:2px 6px;border-radius:5px;}
-.gallery-info{font-size:12px;padding:5px 6px;text-align:left;color:#fff; line-height:1.3;}
-.gallery-info span.name{font-weight:600;}
-.gallery-info span.message{font-style:italic;}
-
-/* Carousel */
-.carousel{position:relative;width:100%;max-height:300px;margin-bottom:20px;overflow:hidden;border-radius:10px;}
-.carousel img{width:100%;height:300px;object-fit:cover;}
-.carousel-caption{position:absolute;bottom:10px;left:10px;color:#fff;font-size:20px;background:rgba(0,0,0,0.5);padding:5px 10px;border-radius:5px;}
-.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:white;border:none;font-size:24px;padding:10px;border-radius:50%;cursor:pointer;}
-.carousel-btn.left{left:10px;} 
-.carousel-btn.right{right:10px;}
-
-/* Sidebar */
-.sidebar{position:fixed;left:0;top:0;height:100%;width:220px;background:rgba(0,0,0,0.9);color:#fff;overflow-x:hidden;transition:width 0.3s;padding-top:60px;z-index:1000;}
-.sidebar.collapsed{width:0;padding:0;}
-.sidebar a{display:block;padding:10px 20px;text-decoration:none;color:white;}
-.sidebar a:hover{background:#111;}
-#sidebarToggle{position:fixed;left:10px;top:15px;background:#ff4da6;border-radius:50%;width:40px;height:40px;border:none;cursor:pointer;color:#fff;font-size:24px;z-index:1100;}
-#sidebarToggle:hover{background:#e60084;}
-
-/* Search bar */
-#searchBar{width:100%;max-width:300px;padding:5px;margin:10px auto;border-radius:15px;border:none;display:block;font-size:16px;}
-
-/* Stats */
-.stats{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;margin:15px auto;font-size:14px;color:#fff;}
-.stat-card{background:rgba(255,255,255,0.1); padding:10px 15px; border-radius:12px; text-align:center; min-width:120px;}
-
-/* Inputs */
-#uploaderName,#categorySelect,#memoryMsg{background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.3); color:#fff; padding:8px 12px; border-radius:15px; font-size:16px; margin:5px; width:calc(100%-20px);}
-#uploaderName::placeholder,#memoryMsg::placeholder{color:rgba(255,255,255,0.6);}
-
-/* Lightbox */
-#lightboxOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:none;justify-content:center;align-items:center;z-index:2000;}
-#lightboxOverlay img{max-width:90%;max-height:90%;border-radius:10px;}
-#lightboxOverlay span{position:absolute;top:20px;right:30px;font-size:30px;color:white;cursor:pointer;}
-</style>
+<title>Zweers Troue 2027</title>
+<link rel="stylesheet" href="style.css">
+<script src="sidebar.js"></script>
 </head>
+
 <body>
 
-<!-- Sidebar -->
-<div class="sidebar collapsed" id="sidebar">
-    <a href="#" data-category="all">Alle Fotos</a>
-    <a href="#" data-category="family">Familie</a>
-    <a href="#" data-category="bride">Bride</a>
-    <a href="#" data-category="groom">Groom</a>
-    <a href="#" data-category="friends">Friends</a>
-    <a href="#" data-category="other">Other</a>
-    <a href="#" data-category="my">My Fotos</a>
-    <a href="#" id="adminBtn">🔐 Admin</a>
-</div>
-<button id="sidebarToggle">☰</button>
+<div class="menu-btn" onclick="toggleSidebar()">☰</div>
 
-<!-- Hero Carousel -->
-<div class="carousel" id="heroCarousel">
-    <div class="carousel-caption">Zweers Troue 2026 ❤️</div>
+<div id="sidebar" class="sidebar">
+<a href="index.html">Home</a>
+<a href="messages.html">Stuur Boodskap</a>
+<a href="memorial.html">Memorial</a>
+<a href="couple.html">Bruidspaar</a>
+<a href="admin.html">Admin</a>
 </div>
+
+<header>Die Zweers Troue 2027</header>
 
 <div class="container">
-    <h1>📸 Zweers Troue Gallery</h1>
-    <p>Upload jou photos vanaf jou foon of rekenaar! ❤️</p>
 
-    <input id="searchBar" placeholder="🔍 Soek naam...">
-
-    <!-- Drop area -->
-    <div id="drop-area">
-        <input type="file" id="fileInput" hidden>
-        <input type="text" id="uploaderName" placeholder="Jou naam (Optioneel)">
-        <select id="categorySelect">
-            <option value="family">Family</option>
-            <option value="bride">Bride</option>
-            <option value="groom">Groom</option>
-            <option value="friends">Friends</option>
-            <option value="other">Other</option>
-        </select>
-        <input type="text" id="memoryMsg" placeholder="Stuur ñ boodskap vir die bruidspaar saam jou foto's">
-        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload Photo</button>
-        <p>Of sleep jou foto hierheen</p>
-    </div>
-<div style="display:flex;justify-content:center;gap:5px;">
-    <input id="searchBar" placeholder="🔍 Soek naam...">
-    <button id="searchBtn">Soek</button>
-
-</div>
-    <!-- Controls -->
-    <div class="controls" id="adminControls" style="display:none;">
-    <button class="select-all-btn" id="selectAllBtn">Select All</button>
-    <button class="deselect-all-btn" id="deselectAllBtn">Deselect All</button>
-    <button class="download-btn" id="downloadSelectedBtn">Download Selected</button>
+<div class="slideshow">
+<img id="slideimg" src="Wedding.jpg">
 </div>
 
-    <div class="confetti-message" id="confettiMessage"></div>
-    <div class="stats" id="stats"></div>
-    <div class="gallery" id="gallery"></div>
-</div>
-<section style="margin-top:50px;">
-    <h2 style="text-align:center;color:#ff4da6;">💌 Los 'n boodskap vir die bruidspaar</h2>
+<div class="card">
 
-    <div style="text-align:center;">
-        <input type="text" id="msgName" placeholder="Jou Naam">
-        <br><br>
-        <textarea id="msgText" placeholder="Jou boodskap..." style="width:100%;max-width:400px;height:80px;border-radius:15px;padding:10px;"></textarea>
-        <br><br>
-        <button class="upload-btn" id="sendMsgBtn">Stuur Boodskap</button>
-    </div>
+<h2>Laai jou fotos op</h2>
 
-    <div id="messagesList" style="margin-top:30px;"></div>
-</section>
-    
+<input id="name" placeholder="Jou naam (opsioneel)">
+<input type="file" id="photo">
 
-<!-- Lightbox -->
-<div id="lightboxOverlay">
-    <span id="closeLightbox">&times;</span>
-    <img id="lightboxImg">
+<button onclick="uploadPhoto()">Upload Foto</button>
+
 </div>
 
-<script type="module">
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject, getMetadata, updateMetadata } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+<div class="card">
 
-const firebaseConfig = {
-    apiKey: "AIzaSyB_AVP6tZD8U4AHNLrVf9nCe-gpOHPDLM8",
-    authDomain: "zweers-troue.firebaseapp.com",
-    projectId: "zweers-troue",
-    storageBucket: "zweers-troue.firebasestorage.app",
-    messagingSenderId: "584236352490",
-    appId: "1:584236352490:web:c717038090bd005e712893",
-    measurementId: "G-JBWM0TNSM4"
-};
+<h2>Foto Gallery</h2>
 
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app);
-    const db = getFirestore(app);
+<div id="gallery" class="gallery"></div>
 
-const adminPassword = "troueAdmin123";
-let isAdmin = false;
+</div>
 
-const input = document.getElementById("fileInput");
-const dropArea = document.getElementById("drop-area");
-const uploaderNameInput = document.getElementById("uploaderName");
-const categorySelect = document.getElementById("categorySelect");
-const memoryMsgInput = document.getElementById("memoryMsg");
-const gallery = document.getElementById("gallery");
-const heroCarousel = document.getElementById("heroCarousel");
-const searchBar = document.getElementById("searchBar");
-const statsDiv = document.getElementById("stats");
+</div>
 
-const sidebar = document.getElementById("sidebar");
-const toggleBtn = document.getElementById("sidebarToggle");
-toggleBtn.addEventListener("click", ()=> sidebar.classList.toggle("collapsed"));
+<script type="module" src="script.js"></script>
 
-document.getElementById("adminBtn").addEventListener("click", ()=>{
-    if(isAdmin){
-        alert("Jy is reeds as Admin ingeteken.");
-        return;
-    }
-    const pass = prompt("Voer admin password in:");
-    if(pass === adminPassword){
-    isAdmin = true;
-
-    document.getElementById("adminControls").style.display = "flex";
-
-    alert("Admin toegang gegee! Delete knoppies is nou sigbaar.");
-    loadImages(currentFilter, searchBar.value);
-} else {
-        alert("Verkeerde password!");
-    }
-});
-
-// Lightbox
-const lightboxOverlay = document.getElementById("lightboxOverlay");
-const lightboxImg = document.getElementById("lightboxImg");
-document.getElementById("closeLightbox").addEventListener("click", ()=>lightboxOverlay.style.display="none");
-
-async function handleFiles(file){
-    const uploader = uploaderNameInput.value || "Anonymous";
-    const category = categorySelect.value || "other";
-    const message = memoryMsgInput.value || "";
-    const storageRef = ref(storage,`photos/${uploader}/${file.name}`);
-    const metadata = {customMetadata:{uploader, category, message, likes:"0", featured:"false"}};
-    await uploadBytes(storageRef,file,metadata);
-    showConfetti();
-    loadImages(currentFilter, searchBar.value);
-}
-
-input.addEventListener("change",(e)=>{ const file = e.target.files[0]; if(file) handleFiles(file); });
-
-dropArea.addEventListener("dragover",(e)=>{ e.preventDefault(); dropArea.classList.add("hover"); });
-dropArea.addEventListener("dragleave",(e)=>{ e.preventDefault(); dropArea.classList.remove("hover"); });
-dropArea.addEventListener("drop",(e)=>{ e.preventDefault(); dropArea.classList.remove("hover"); const file=e.dataTransfer.files[0]; if(file) handleFiles(file); });
-
-function showConfetti(){
-    const msg=document.getElementById("confettiMessage");
-    msg.innerText="🎉 Dankie! Jou foto is nou deel van die herinneringe!";
-    setTimeout(()=>{msg.innerText="";},3000);
-}
-
-let currentFilter="all";
-let carouselImages=[];
-
-async function loadImages(filterCategory="all", searchName=""){
-    gallery.innerHTML="";
-    carouselImages=[];
-    const listRef = ref(storage,"photos");
-    const res = await listAll(listRef);
-    const allImages = [];
-    const uploaderCount={};
-    const userSections = {};
-
-    for(const folder of res.prefixes){
-        const uploader = folder.name;
-        if(searchName && !uploader.toLowerCase().includes(searchName.toLowerCase())) continue;
-
-        const folderRes = await listAll(folder);
-        for(const item of folderRes.items){
-
-            const metaData = await getMetadata(item);
-            const meta = metaData.customMetadata || {};
-            const category = meta.category || "other";
-            const message = meta.message || "";
-            let likes = parseInt(meta.likes || "0");
-            const featured = meta.featured || "false";
-
-            if(filterCategory!=="all" && filterCategory!==category) continue;
-
-            const imageUrl = await getDownloadURL(item);
-
-            const div=document.createElement("div");
-            div.className="gallery-item";
-
-            const img=document.createElement("img");
-            img.src=imageUrl;
-            img.addEventListener("click",()=>{lightboxImg.src=imageUrl; lightboxOverlay.style.display="flex";});
-
-            const checkbox=document.createElement("input");
-            checkbox.type="checkbox";
-            checkbox.className="photo-checkbox";
-
-            const checkboxContainer=document.createElement("div");
-            checkboxContainer.className="checkbox-container";
-            checkboxContainer.appendChild(checkbox);
-
-            const deleteBtn=document.createElement("button");
-            deleteBtn.className="delete-btn";
-            deleteBtn.innerText="Delete";
-            deleteBtn.style.display = isAdmin ? "inline-block" : "none";
-
-            deleteBtn.onclick=async ()=>{
-                if(confirm("Is jy seker jy wil delete?")){
-                    await deleteObject(item);
-                    loadImages(currentFilter, searchBar.value);
-                }
-            };
-
-            const likeBtn=document.createElement("button");
-            likeBtn.style.border="none";
-            likeBtn.style.background="transparent";
-            likeBtn.style.color="#ff4da6";
-            likeBtn.style.cursor="pointer";
-
-            const likeKey = `liked_${item.fullPath}`;
-
-            if(localStorage.getItem(likeKey)){
-                likeBtn.innerText=`❤️ ${likes} (Liked)`;
-                likeBtn.disabled = true;
-            } else {
-                likeBtn.innerText=`❤️ ${likes}`;
-            }
-
-            likeBtn.onclick=async ()=>{
-                if(localStorage.getItem(likeKey)) return;
-                likes++;
-                await updateMetadata(item,{customMetadata:{...meta, likes:likes.toString()}});
-                localStorage.setItem(likeKey,"true");
-                loadImages(currentFilter, searchBar.value);
-            };
-
-            const infoDiv=document.createElement("div");
-            infoDiv.className="gallery-info";
-            infoDiv.innerHTML=`
-                <span class="name">👤 ${uploader}</span> | 📂 ${category}<br>
-                <span class="message">${message}</span>
-            `;
-
-            div.appendChild(img);
-            div.appendChild(checkboxContainer);
-            div.appendChild(deleteBtn);
-            div.appendChild(likeBtn);
-            div.appendChild(infoDiv);
-            if(!userSections[uploader]){
-    const heading = document.createElement("h2");
-    heading.style.marginTop = "30px";
-    heading.style.color = "#ff4da6";
-    heading.innerText = `👤 ${uploader}`;
-    gallery.appendChild(heading);
-
-    const sectionDiv = document.createElement("div");
-    sectionDiv.style.display="grid";
-    sectionDiv.style.gridTemplateColumns="repeat(auto-fit,minmax(120px,1fr))";
-    sectionDiv.style.gap="10px";
-
-    gallery.appendChild(sectionDiv);
-    userSections[uploader] = sectionDiv;
-}
-
-userSections[uploader].appendChild(div);
-
-            allImages.push({url:imageUrl, uploader, category, message, likes, featured});
-
-            if(!uploaderCount[uploader]) uploaderCount[uploader]=0;
-            uploaderCount[uploader]++;
-        }
-    }
-
-    const totalPhotos=allImages.length;
-    const totalUsers=Object.keys(uploaderCount).length;
-    let topUploader="None"; let topCount=0;
-    for(const [user,count] of Object.entries(uploaderCount)){
-        if(count>topCount){ topUploader=user; topCount=count; }
-    }
-
-    statsDiv.innerHTML="";
-    statsDiv.innerHTML=`
-        <div class="stat-card">📸 Total Photos<br><strong>${totalPhotos}</strong></div>
-        <div class="stat-card">👥 Total Users<br><strong>${totalUsers}</strong></div>
-        <div class="stat-card">🔥 Top Uploader<br><strong>${topUploader} (${topCount})</strong></div>
-    `;
-
-    carouselImages = allImages.slice(-5);
-    updateCarousel();
-}
-
-let currentSlide=0;
-function updateCarousel(){
-    heroCarousel.querySelectorAll("img").forEach(e=>e.remove());
-    if(carouselImages.length===0) return;
-    const img=document.createElement("img");
-    img.src=carouselImages[currentSlide].url;
-    heroCarousel.appendChild(img);
-    currentSlide=(currentSlide+1)%carouselImages.length;
-}
-
-setInterval(updateCarousel,5000);
-let startX = 0;
-
-heroCarousel.addEventListener("touchstart", e=>{
-    startX = e.touches[0].clientX;
-});
-
-heroCarousel.addEventListener("touchend", e=>{
-    let endX = e.changedTouches[0].clientX;
-
-    if(startX - endX > 50){
-        currentSlide = (currentSlide+1)%carouselImages.length;
-        updateCarousel();
-    }
-
-    if(endX - startX > 50){
-        currentSlide = (currentSlide-1+carouselImages.length)%carouselImages.length;
-        updateCarousel();
-    }
-});
-document.getElementById("selectAllBtn").addEventListener("click",()=>{document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=true);});
-document.getElementById("deselectAllBtn").addEventListener("click",()=>{document.querySelectorAll(".photo-checkbox").forEach(cb=>cb.checked=false);});
-document.getElementById("downloadSelectedBtn").addEventListener("click", async ()=>{
-    const checkboxes=document.querySelectorAll(".gallery-item input.photo-checkbox");
-    const selected=Array.from(checkboxes).filter(cb=>cb.checked);
-    if(selected.length===0){alert("Geen foto geselekteer nie!"); return;}
-    for(const cb of selected){
-        const img=cb.closest(".gallery-item").querySelector("img");
-        const response=await fetch(img.src,{mode:'cors'});
-        const blob=await response.blob();
-        const blobUrl=URL.createObjectURL(blob);
-        const a=document.createElement("a");
-        a.href=blobUrl;
-        a.download=img.src.split("/").pop();
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(blobUrl);
-    }
-});
-
-document.querySelectorAll(".sidebar a[data-category]").forEach(link=>{
-    link.addEventListener("click",(e)=>{
-        e.preventDefault();
-        currentFilter = link.dataset.category;
-        loadImages(currentFilter, searchBar.value);
-    });
-});
-
-document.getElementById("searchBtn")
-.addEventListener("click", ()=>{
-    loadImages(currentFilter, searchBar.value);
-});
-
-loadImages();
-
-    document.getElementById("sendMsgBtn")
-.addEventListener("click", async ()=>{
-    const name = document.getElementById("msgName").value;
-    const text = document.getElementById("msgText").value;
-
-    if(!name || !text){
-        alert("Vul alles in.");
-        return;
-    }
-
-    await addDoc(collection(db,"messages"),{
-        name,
-        text,
-        created: Date.now()
-    });
-
-    document.getElementById("msgName").value="";
-    document.getElementById("msgText").value="";
-
-    loadMessages();
-});
-
-async function loadMessages(){
-    const snapshot = await getDocs(collection(db,"messages"));
-    const container = document.getElementById("messagesList");
-    container.innerHTML="";
-
-    snapshot.forEach(doc=>{
-        const data = doc.data();
-
-        const div=document.createElement("div");
-        div.style.background="rgba(255,255,255,0.1)";
-        div.style.padding="10px";
-        div.style.margin="10px auto";
-        div.style.borderRadius="15px";
-        div.style.maxWidth="500px";
-
-        div.innerHTML=`
-            <strong>${data.name}</strong>
-            <p>${data.text}</p>
-        `;
-
-        container.appendChild(div);
-    });
-}
-
-loadMessages();
-</script>
 </body>
 </html>
